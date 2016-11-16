@@ -20,6 +20,7 @@
 #include <boost/lexical_cast.hpp>
 #include "wtaccounts.h"
 
+
 WtAccounts::WtAccounts(const Wt::WEnvironment& env) : Wt::WApplication(env), ui(new Ui_WtAccounts)
 {
 	ui->setupUi(root());
@@ -40,7 +41,11 @@ WtAccounts::WtAccounts(const Wt::WEnvironment& env) : Wt::WApplication(env), ui(
 	// new regrouping functions
 	//ui->nv_menu_item1_mi->clicked().connect(boost::bind(&WtAccounts::subscriber_show_operation_tab, this, "create"));
 	//ui->nv_menu_item2_mi->clicked().connect(boost::bind(&WtAccounts::subscriber_show_operation_tab, this, "edit"));
-	//ui->refresh_button->clicked()
+
+	ui->p_account_operation_split_button_popup->itemSelected().connect(boost::bind(&WtAccounts::p_account_operation_CHECK, this, "create")); //Button for ama data
+
+
+
 	ui->user_full_name_button->clicked().connect(boost::bind(&WtAccounts::subscriber_name_dialog, this, "create"));
 	ui->user_full_name_button_edit_user_tab->clicked().connect(boost::bind(&WtAccounts::subscriber_name_dialog, this, "edit"));
 	ui->user_group_button->clicked().connect(boost::bind(&WtAccounts::subscriber_group_dialog, this, "create"));
@@ -205,6 +210,33 @@ std::string information_edit_mode = "";
 
 // zone fixed, clear function
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+// function for operation on check
+extern void WtAccounts::p_account_operation_CHECK(std::string operation_name)
+{
+std::string ResultOfoperationmeny="";
+ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text().toUTF8();
+
+
+if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+
+	ui->CHECK_pop_tab_mi->setHidden(false);
+	ui->CHECK_pop_tab_mi->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
+		ui->main_tabs->setCurrentIndex(3);
+
+	ui->CHECK_user_treeTable->clear();
+	ui->CHECK_user_treeTable->refresh();
+
+			ui->CHECK_user_treeTable->setHeaderCount(1);
+			ui->CHECK_user_treeTable->elementAt(0, 0)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Услуга")));
+			ui->CHECK_user_treeTable->elementAt(0, 1)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Код")));
+			ui->CHECK_user_treeTable->elementAt(0, 2)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Количество")));
+}
+
+
+
+}
+
 
 // function show required tab, depend on operation_name
 extern void WtAccounts::subscriber_show_operation_tab(std::string operation_name)
