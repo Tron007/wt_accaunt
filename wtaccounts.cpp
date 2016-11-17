@@ -220,17 +220,91 @@ ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text
 
 if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
 
-	ui->CHECK_pop_tab_mi->setHidden(false);
-	ui->CHECK_pop_tab_mi->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
-		ui->main_tabs->setCurrentIndex(3);
 
-	ui->CHECK_user_treeTable->clear();
-	ui->CHECK_user_treeTable->refresh();
+	Wt::WMessageBox *messageBox;
+	std::string changedSubscriberName = "";
+	Wt::WTreeNode *selected_node; // operator* returns contents of an interator
+	std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
+		if (!highlightedRows.empty())
+					{
+		ui->CHECK_pop_tab_mi->setHidden(false);
+						ui->CHECK_pop_tab_mi->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
+						ui->main_tabs->setCurrentIndex(3);
 
-			ui->CHECK_user_treeTable->setHeaderCount(1);
-			ui->CHECK_user_treeTable->elementAt(0, 0)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Услуга")));
-			ui->CHECK_user_treeTable->elementAt(0, 1)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Код")));
-			ui->CHECK_user_treeTable->elementAt(0, 2)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Количество")));
+						ui->CHECK_user_treeTable->clear();
+						ui->CHECK_user_treeTable->refresh();
+
+						ui->CHECK_user_treeTable->setHeaderCount(1);
+						ui->CHECK_user_treeTable->elementAt(0, 0)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Устройство")));
+						ui->CHECK_user_treeTable->elementAt(0, 1)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Запись")));
+						ui->CHECK_user_treeTable->elementAt(0, 2)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Тип")));
+						ui->CHECK_user_treeTable->elementAt(0, 3)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер А")));
+						ui->CHECK_user_treeTable->elementAt(0, 4)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Запись")));
+						ui->CHECK_user_treeTable->elementAt(0, 5)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер Б")));
+						ui->CHECK_user_treeTable->elementAt(0, 6)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Дата")));
+					    ui->CHECK_user_treeTable->elementAt(0, 7)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Время")));
+						ui->CHECK_user_treeTable->elementAt(0, 8)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Код")));
+					    ui->CHECK_user_treeTable->elementAt(0, 9)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Абонент")));
+						ui->CHECK_user_treeTable->elementAt(0, 10)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Откуда")));
+						ui->CHECK_user_treeTable->elementAt(0, 11)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Город")));
+			     		ui->CHECK_user_treeTable->elementAt(0, 12)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Категория")));
+						ui->CHECK_user_treeTable->elementAt(0, 13)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Секунд вызова")));
+			     		ui->CHECK_user_treeTable->elementAt(0, 14)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Стоимость")));
+
+			     		for (std::set<Wt::WTreeNode* >::iterator i = highlightedRows.begin(); i != highlightedRows.end(); ++i)
+			     					{
+			     					  selected_node = *i;
+			     					}
+                      changedSubscriberName = selected_node->label()->text().toUTF8();
+
+			       highlightedRows.clear();
+			       //new Wt::WText(Wt::WString::fromUTF8(changedSubscriberName), ui->CHECK_user_treeTable->elementAt(1, 9));
+
+mysql_init(&mysql);
+conn=mysql_real_connect(&mysql, server, user, password, database, 0, 0, 0);
+mysql_query(&mysql,"SET NAMES 'UTF8'");
+
+			     	if(conn==NULL){
+			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
+			     	if(conn==NULL){
+			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
+
+			     	std::string mysql_subscriber_all_table_data = "SELECT c.*,full_name FROM account_database.subscriber "
+			     			" AS a INNER JOIN account_database.phone_numbers AS b INNER JOIN account_database.ama_data AS "
+			     			"c ON a.subscriber_id=b.subscriber_id WHERE full_name='"+changedSubscriberName+"' "
+			     					"AND (b.number=c.numberB OR b.number=c.numberA)";
+
+			     				int row_number = 0;
+			     				query_state=mysql_query(conn, mysql_subscriber_all_table_data.c_str());
+			     				if(query_state!=0)
+			     				{
+			     				   std::cout<<mysql_error(conn)<<std::endl<<std::endl;
+			     				}
+			     				res=mysql_store_result(conn);
+			     				while((row=mysql_fetch_row(res))!=NULL)
+			     				{
+			     					row_number++;
+			     					new Wt::WText(Wt::WString::fromUTF8(row[1]), ui->CHECK_user_treeTable->elementAt(row_number, 3));
+			     					new Wt::WText(Wt::WString::fromUTF8(row[2]), ui->CHECK_user_treeTable->elementAt(row_number, 5));
+			     					new Wt::WText(Wt::WString::fromUTF8(row[3]), ui->CHECK_user_treeTable->elementAt(row_number, 6));
+			     					new Wt::WText(Wt::WString::fromUTF8(row[4]), ui->CHECK_user_treeTable->elementAt(row_number, 7));
+			     					new Wt::WText(Wt::WString::fromUTF8(changedSubscriberName), ui->CHECK_user_treeTable->elementAt(row_number, 9));
+			     				}
+			     				ui->CHECK_user_treeTable->refresh();
+			     				mysql_free_result(res);
+			     				mysql_close(conn);
+
+				} else
+				{
+					messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Не выбран абонент"), Wt::Information, Wt::Yes | Wt::No);
+					messageBox->buttonClicked().connect(std::bind([=] () {
+					delete messageBox;
+					}));
+
+					messageBox->show();
+				}
+
+
 }
 
 

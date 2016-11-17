@@ -231,6 +231,8 @@ public:
 	Wt::WTextArea *information_text_area;
 	Wt::WContainerWidget * edit_user_tab;
 
+
+
 	Wt::WContainerWidget * CHECK_pop_tab;
 	Wt::WMenuItem * CHECK_pop_tab_mi;
 	Wt::WTable *CHECK_user_treeTable;
@@ -1987,7 +1989,12 @@ public:
 					main_tabs->setTabHidden(3, 1);
 					main_tabs->setTabCloseable(3, 1);
 					{
-						CHECK_user_treeTable = new Wt::WTable(CHECK_pop_tab);
+						Wt::WContainerWidget *service_table_container = new Wt::WContainerWidget(CHECK_pop_tab);
+						service_table_container->setHtmlTagName("div");
+						service_table_container->setHeight(Wt::WLength("800px"));
+						service_table_container->setOverflow(Wt::WContainerWidget::Overflow::OverflowAuto, Wt::Orientation::Vertical);
+
+						CHECK_user_treeTable = new Wt::WTable(service_table_container);
 						CHECK_user_treeTable->setId("CHECK_user_treeTable");
 						CHECK_user_treeTable->setStyleClass(Wt::WString::fromUTF8("table table-bordered table-striped table-hover"));
 						CHECK_user_treeTable->setInline(0);
@@ -1997,6 +2004,8 @@ public:
 				}
 			}
 		}
+
+
 
 		connectAllSignals();
 
