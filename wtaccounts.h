@@ -14,6 +14,87 @@
 
 #include "ui_wtaccounts.h"
 
+
+
+//Below is the "Rendering HTML to PDF" code from the widget gallery, with the new container widget for a target.
+namespace {
+    void HPDF_STDCALL error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no,
+               void *user_data) {
+    fprintf(stderr, "libharu error: error_no=%04X, detail_no=%d\n",
+        (unsigned int) error_no, (int) detail_no);
+    }
+}
+
+class ReportResource : public Wt::WResource
+{
+public:
+  ReportResource(Wt::WContainerWidget* target, Wt::WObject* parent = 0)
+    : Wt::WResource(parent),
+    _target(NULL)
+  {
+    suggestFileName("report.pdf");
+    _target = target;
+  }
+
+  virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
+  {
+    response.setMimeType("application/pdf");
+
+    HPDF_Doc pdf = HPDF_New(error_handler, 0);
+
+    // Note: UTF-8 encoding (for TrueType fonts) is only available since libharu 2.3.0 !
+    HPDF_UseUTFEncodings(pdf);
+
+    renderReport(pdf);
+ int ddsfd;
+    HPDF_SaveToStream(pdf);
+    unsigned int size = HPDF_GetStreamSize(pdf);
+    HPDF_BYTE *buf = new HPDF_BYTE[size];
+    HPDF_ReadFromStream (pdf, buf, &size);
+    HPDF_Free(pdf);
+    response.out().write((char*)buf, size);
+    delete[] buf;
+  }
+
+private:
+
+  Wt::WContainerWidget* _target;
+
+  void renderReport(HPDF_Doc pdf)
+  {
+    std::stringstream ss;
+    _target->htmlText(ss);
+    std::string out = ss.str();
+    std::string out_id = _target->id();
+    std::string out_parent_id = _target->parent()->id();
+
+    renderPdf(Wt::WString::fromUTF8(ss.str()), pdf);
+  }
+
+  void renderPdf(const Wt::WString& html, HPDF_Doc pdf)
+  {
+    HPDF_Page page = HPDF_AddPage(pdf);
+    HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
+int d;
+    Wt::Render::WPdfRenderer renderer(pdf, page);
+    renderer.setMargin(1);
+    renderer.setDpi(96);
+    renderer.render(html);
+  }
+};
+
+
+
+
+class ReportResource2
+{	std::string gow="";
+public:
+
+	ReportResource2(std::string d) : gow(d)
+    {}
+std::string ret(){return gow;}
+};
+
 class WtAccounts : public Wt::WApplication
 {
 
@@ -62,5 +143,10 @@ private:
 	Ui_WtAccounts *ui;
 
 };
+
+
+
+
+
 
 #endif // WTACCOUNTS_H

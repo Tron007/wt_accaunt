@@ -21,6 +21,9 @@
 #include "wtaccounts.h"
 
 
+
+
+
 WtAccounts::WtAccounts(const Wt::WEnvironment& env) : Wt::WApplication(env), ui(new Ui_WtAccounts)
 {
 	ui->setupUi(root());
@@ -193,16 +196,7 @@ std::string agreement_date_edit_mode = "";
 std::string description_edit_mode = "";
 std::string information_edit_mode = "";
 
-
-
-
-
-
-
-
-
-
-
+int dor=0;
 
 
 
@@ -220,36 +214,60 @@ ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text
 
 if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
 
-
 	Wt::WMessageBox *messageBox;
+
+	//check year
+	std::string ResulYearCombo="";
+	ResulYearCombo=ui->year_combo_box->currentText().toUTF8();
+	//check month
+	int ResulMonthCombo_index;
+	ResulMonthCombo_index=ui->month_combo_box->currentIndex();ResulMonthCombo_index++;
+	std::string ResulMonthCombo_index_string=std::to_string(ResulMonthCombo_index);
+
+
+
 	std::string changedSubscriberName = "";
 	Wt::WTreeNode *selected_node; // operator* returns contents of an interator
 	std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
 		if (!highlightedRows.empty())
 					{
+
+
+
+			//repo->setLink(pdf);
+
 		ui->CHECK_pop_tab_mi->setHidden(false);
 						ui->CHECK_pop_tab_mi->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
 						ui->main_tabs->setCurrentIndex(3);
 
 						ui->CHECK_user_treeTable->clear();
 						ui->CHECK_user_treeTable->refresh();
+						Wt::WResource *pdf = new ReportResource(ui->CHECK_pop_tab);
+
+												Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf", ui->CHECK_pop_tab);
+												button2->setLink(pdf);
 
 						ui->CHECK_user_treeTable->setHeaderCount(1);
+
+
+						ReportResource2 *d=new ReportResource2("WHY");
+						std::string temper=d->ret();
+						Wt::WPushButton *button = new Wt::WPushButton(temper, ui->CHECK_pop_tab);
+
 						ui->CHECK_user_treeTable->elementAt(0, 0)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Устройство")));
 						ui->CHECK_user_treeTable->elementAt(0, 1)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Запись")));
 						ui->CHECK_user_treeTable->elementAt(0, 2)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Тип")));
 						ui->CHECK_user_treeTable->elementAt(0, 3)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер А")));
-						ui->CHECK_user_treeTable->elementAt(0, 4)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Запись")));
-						ui->CHECK_user_treeTable->elementAt(0, 5)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер Б")));
-						ui->CHECK_user_treeTable->elementAt(0, 6)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Дата")));
-					    ui->CHECK_user_treeTable->elementAt(0, 7)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Время")));
-						ui->CHECK_user_treeTable->elementAt(0, 8)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Код")));
-					    ui->CHECK_user_treeTable->elementAt(0, 9)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Абонент")));
-						ui->CHECK_user_treeTable->elementAt(0, 10)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Откуда")));
-						ui->CHECK_user_treeTable->elementAt(0, 11)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Город")));
-			     		ui->CHECK_user_treeTable->elementAt(0, 12)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Категория")));
-						ui->CHECK_user_treeTable->elementAt(0, 13)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Секунд вызова")));
-			     		ui->CHECK_user_treeTable->elementAt(0, 14)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Стоимость")));
+						ui->CHECK_user_treeTable->elementAt(0, 4)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер Б")));
+						ui->CHECK_user_treeTable->elementAt(0, 5)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Дата")));
+					    ui->CHECK_user_treeTable->elementAt(0, 6)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Время")));
+						ui->CHECK_user_treeTable->elementAt(0, 7)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Код")));
+					    ui->CHECK_user_treeTable->elementAt(0, 8)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Абонент")));
+						ui->CHECK_user_treeTable->elementAt(0, 9)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Откуда")));
+						ui->CHECK_user_treeTable->elementAt(0, 10)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Город")));
+			     		ui->CHECK_user_treeTable->elementAt(0, 11)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Категория")));
+						ui->CHECK_user_treeTable->elementAt(0, 12)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Секунд вызова")));
+			     		ui->CHECK_user_treeTable->elementAt(0, 13)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Стоимость")));
 
 			     		for (std::set<Wt::WTreeNode* >::iterator i = highlightedRows.begin(); i != highlightedRows.end(); ++i)
 			     					{
@@ -258,7 +276,7 @@ if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fro
                       changedSubscriberName = selected_node->label()->text().toUTF8();
 
 			       highlightedRows.clear();
-			       //new Wt::WText(Wt::WString::fromUTF8(changedSubscriberName), ui->CHECK_user_treeTable->elementAt(1, 9));
+
 
 mysql_init(&mysql);
 conn=mysql_real_connect(&mysql, server, user, password, database, 0, 0, 0);
@@ -272,7 +290,8 @@ mysql_query(&mysql,"SET NAMES 'UTF8'");
 			     	std::string mysql_subscriber_all_table_data = "SELECT c.*,full_name FROM account_database.subscriber "
 			     			" AS a INNER JOIN account_database.phone_numbers AS b INNER JOIN account_database.ama_data AS "
 			     			"c ON a.subscriber_id=b.subscriber_id WHERE full_name='"+changedSubscriberName+"' "
-			     					"AND (b.number=c.numberB OR b.number=c.numberA)";
+			     					"AND (b.number=c.numberB OR b.number=c.numberA) "
+			     					"AND year(c.start_date)=year(str_to_date('"+ResulYearCombo+"','%Y')) AND month(c.start_date)=month(str_to_date('"+ResulMonthCombo_index_string+"','%m')) ";
 
 			     				int row_number = 0;
 			     				query_state=mysql_query(conn, mysql_subscriber_all_table_data.c_str());
@@ -280,19 +299,32 @@ mysql_query(&mysql,"SET NAMES 'UTF8'");
 			     				{
 			     				   std::cout<<mysql_error(conn)<<std::endl<<std::endl;
 			     				}
+			     				std::string TypeOfcall="";
 			     				res=mysql_store_result(conn);
 			     				while((row=mysql_fetch_row(res))!=NULL)
-			     				{
-			     					row_number++;
-			     					new Wt::WText(Wt::WString::fromUTF8(row[1]), ui->CHECK_user_treeTable->elementAt(row_number, 3));
-			     					new Wt::WText(Wt::WString::fromUTF8(row[2]), ui->CHECK_user_treeTable->elementAt(row_number, 5));
-			     					new Wt::WText(Wt::WString::fromUTF8(row[3]), ui->CHECK_user_treeTable->elementAt(row_number, 6));
-			     					new Wt::WText(Wt::WString::fromUTF8(row[4]), ui->CHECK_user_treeTable->elementAt(row_number, 7));
-			     					new Wt::WText(Wt::WString::fromUTF8(changedSubscriberName), ui->CHECK_user_treeTable->elementAt(row_number, 9));
+			     				{row_number++;
+
+			     				if (Wt::WString::fromUTF8(row[11])=="common") TypeOfcall="Городской";
+			     				if (Wt::WString::fromUTF8(row[11])=="outgoing mobile") TypeOfcall="Входяший";
+			     				if (Wt::WString::fromUTF8(row[11])=="international") TypeOfcall="Междугородный";
+
+
+
+			     				new Wt::WText(Wt::WString::fromUTF8("Учет телефонных звонков"), ui->CHECK_user_treeTable->elementAt(row_number, 0));
+			     				new Wt::WText(Wt::WString::fromUTF8("Обычный"), ui->CHECK_user_treeTable->elementAt(row_number, 1));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[1]), ui->CHECK_user_treeTable->elementAt(row_number, 3));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[2]), ui->CHECK_user_treeTable->elementAt(row_number, 4));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[3]), ui->CHECK_user_treeTable->elementAt(row_number, 5));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[4]), ui->CHECK_user_treeTable->elementAt(row_number, 6));
+			     				new Wt::WText(Wt::WString::fromUTF8(changedSubscriberName), ui->CHECK_user_treeTable->elementAt(row_number, 8));
+			     				new Wt::WText(Wt::WString::fromUTF8(TypeOfcall), ui->CHECK_user_treeTable->elementAt(row_number, 2));
 			     				}
 			     				ui->CHECK_user_treeTable->refresh();
 			     				mysql_free_result(res);
 			     				mysql_close(conn);
+
+
+
 
 				} else
 				{
@@ -302,11 +334,194 @@ mysql_query(&mysql,"SET NAMES 'UTF8'");
 					}));
 
 					messageBox->show();
-				}
+				}}
 
 
+if (Wt::WString::fromUTF8("Netflow трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+
+	Wt::WMessageBox *messageBox;
+
+	//check year
+	std::string ResulYearCombo="";
+	ResulYearCombo=ui->year_combo_box->currentText().toUTF8();
+	//check month
+	int ResulMonthCombo_index;
+	ResulMonthCombo_index=ui->month_combo_box->currentIndex();ResulMonthCombo_index++;
+	std::string ResulMonthCombo_index_string=std::to_string(ResulMonthCombo_index);
+
+
+
+	std::string changedSubscriberName = "";
+	Wt::WTreeNode *selected_node; // operator* returns contents of an interator
+	std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
+		if (!highlightedRows.empty())
+					{
+
+
+
+			Wt::WContainerWidget * CHECK_pop_tab_Temp = new Wt::WContainerWidget(ui->container_cp);
+			Wt::WMenuItem * CHECK_pop_tab_mi_temp = ui->main_tabs->addTab(CHECK_pop_tab_Temp, Wt::WString::fromUTF8(""));;
+			Wt::WTable *CHECK_user_treeTablef;
+			CHECK_pop_tab_mi_temp->setCloseable(true);
+			CHECK_pop_tab_mi_temp->enable();
+
+			Wt::WContainerWidget *service_table_container = new Wt::WContainerWidget(CHECK_pop_tab_Temp);
+			service_table_container->setHtmlTagName("div");
+			service_table_container->setHeight(Wt::WLength("800px"));
+			service_table_container->setOverflow(Wt::WContainerWidget::Overflow::OverflowAuto, Wt::Orientation::Vertical);
+
+			CHECK_user_treeTablef = new Wt::WTable(service_table_container);
+			CHECK_user_treeTablef->setId("CHECK_user_treeTable");
+			CHECK_user_treeTablef->setStyleClass(Wt::WString::fromUTF8("table table-bordered table-striped table-hover"));
+			CHECK_user_treeTablef->setInline(0);
+			CHECK_user_treeTablef->setHeaderCount(1, Wt::Orientation::Horizontal);
+			CHECK_user_treeTablef->setHeaderCount(1, Wt::Orientation::Vertical);
+
+
+
+
+			CHECK_pop_tab_mi_temp->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
+
+			ui->main_tabs->setCurrentIndex(ui->main_tabs->indexOf(CHECK_pop_tab_Temp));
+
+			CHECK_user_treeTablef->clear();
+			CHECK_user_treeTablef->refresh();
+
+
+			CHECK_user_treeTablef->setHeaderCount(1);
+
+
+						ReportResource2 *d=new ReportResource2("WHY");
+						std::string temper=d->ret();
+						Wt::WPushButton *button = new Wt::WPushButton(temper, ui->CHECK_pop_tab);
+
+						CHECK_user_treeTablef->elementAt(0, 0)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Устройство")));
+						CHECK_user_treeTablef->elementAt(0, 1)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Запись")));
+						CHECK_user_treeTablef->elementAt(0, 2)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Тип")));
+						CHECK_user_treeTablef->elementAt(0, 3)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер А")));
+						CHECK_user_treeTablef->elementAt(0, 4)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер Б")));
+						CHECK_user_treeTablef->elementAt(0, 5)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Дата")));
+
+
+			     		for (std::set<Wt::WTreeNode* >::iterator i = highlightedRows.begin(); i != highlightedRows.end(); ++i)
+			     					{
+			     					  selected_node = *i;
+			     					}
+                      changedSubscriberName = selected_node->label()->text().toUTF8();
+
+			       highlightedRows.clear();
+
+
+mysql_init(&mysql);
+conn=mysql_real_connect(&mysql, server, user, password, database, 0, 0, 0);
+mysql_query(&mysql,"SET NAMES 'UTF8'");
+
+			     	if(conn==NULL){
+			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
+			     	if(conn==NULL){
+			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
+
+			     	std::string mysql_subscriber_all_table_data = "SELECT c.*,full_name FROM account_database.subscriber "
+			     			" AS a INNER JOIN account_database.phone_numbers AS b INNER JOIN account_database.ama_data AS "
+			     			"c ON a.subscriber_id=b.subscriber_id WHERE full_name='"+changedSubscriberName+"' "
+			     					"AND (b.number=c.numberB OR b.number=c.numberA) "
+			     					"AND year(c.start_date)=year(str_to_date('"+ResulYearCombo+"','%Y')) AND month(c.start_date)=month(str_to_date('"+ResulMonthCombo_index_string+"','%m')) ";
+
+			     				int row_number = 0;
+			     				query_state=mysql_query(conn, mysql_subscriber_all_table_data.c_str());
+			     				if(query_state!=0)
+			     				{
+			     				   std::cout<<mysql_error(conn)<<std::endl<<std::endl;
+			     				}
+			     				std::string TypeOfcall="";
+			     				res=mysql_store_result(conn);
+			     				while((row=mysql_fetch_row(res))!=NULL)
+			     				{row_number++;
+
+			     				if (Wt::WString::fromUTF8(row[11])=="common") TypeOfcall="Городской";
+			     				if (Wt::WString::fromUTF8(row[11])=="outgoing mobile") TypeOfcall="Входяший";
+			     				if (Wt::WString::fromUTF8(row[11])=="international") TypeOfcall="Междугородный";
+
+
+
+			     				new Wt::WText(Wt::WString::fromUTF8("Учет телефонных звонков"), CHECK_user_treeTablef->elementAt(row_number, 0));
+			     				new Wt::WText(Wt::WString::fromUTF8("Обычный"), CHECK_user_treeTablef->elementAt(row_number, 1));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[1]), CHECK_user_treeTablef->elementAt(row_number, 3));
+
+			     				}
+			     				CHECK_user_treeTablef->refresh();
+
+
+			     				mysql_free_result(res);
+			     				mysql_close(conn);
+
+
+
+
+				} else
+				{
+					messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Не выбран абонент"), Wt::Information, Wt::Yes | Wt::No);
+					messageBox->buttonClicked().connect(std::bind([=] () {
+					delete messageBox;
+					}));
+
+					messageBox->show();
+				}}
+
+// show dialog window where you manage reports (create)
+if (Wt::WString::fromUTF8("Новый отчет")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+
+
+
+	    Wt::WDialog *dialog = new Wt::WDialog(Wt::WString::fromUTF8("Отчеты"));
+
+	    dialog->resize(500, 300);
+
+Wt::WPushButton *save_exit_button = new Wt::WPushButton(Wt::WString::fromUTF8("Квитанция для физ."), dialog->contents());
+	        //save_exit_button->setStyleClass(Wt::WString::fromUTF8("btn btn-default with-label col-md-3 col-lg-3"));
+
+Wt::WPushButton *add_service_button = new Wt::WPushButton(Wt::WString::fromUTF8("Редактирование квитанции"), dialog->contents());
+	        //add_service_button->setStyleClass(Wt::WString::fromUTF8("btn btn-default with-label col-md-3 col-lg-3"));
+
+Wt::WPushButton *add2_service_button = new Wt::WPushButton(Wt::WString::fromUTF8("Расшифровка город и межгород"), dialog->contents());
+	              //  add_service_button->setStyleClass(Wt::WString::fromUTF8("btn btn-default with-label col-md-3 col-lg-3"));
+
+	                dialog->show();
+
+	                Wt::WPushButton *cancel = new Wt::WPushButton(Wt::WString::fromUTF8("Закрыть"), dialog->footer());
+	                    dialog->rejectWhenEscapePressed();
+
+
+	                    // Accept the dialog
+
+	                    save_exit_button->clicked().connect(std::bind([=] () {
+	                    	  dor=1;dialog->accept();
+	                    }));
+
+	                    add_service_button->clicked().connect(std::bind([=] () {
+	                    	dor=2;dialog->accept();
+                         }));
+
+	                    add2_service_button->clicked().connect(std::bind([=] () {
+	                    	dor=3;dialog->accept();
+	                    }));
+
+	                    // Reject the dialog
+	                    cancel->clicked().connect(dialog, &Wt::WDialog::reject);
+
+
+	                    // Process the dialog result.
+	                    dialog->finished().connect(std::bind([=] () {
+	                	if (dor==1)
+	                	{
+	                		WtAccounts::subscriber_show_operation_tab("edit");
+
+	                	}else if (dor==2) {WtAccounts::subscriber_show_operation_tab("view");}
+	                	else if (dor==3)  {WtAccounts::subscriber_show_operation_tab("create");}
+
+	                	delete dialog;
+	                    }));
 }
-
 
 
 }
@@ -4114,8 +4329,6 @@ extern void WtAccounts::create_new_service_dialog()
 
     dialog->show();
 }
-
-
 
 
 
