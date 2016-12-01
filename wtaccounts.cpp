@@ -212,7 +212,7 @@ std::string ResultOfoperationmeny="";
 ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text().toUTF8();
 
 
-if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny) || Wt::WString::fromUTF8("Netflow трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
 
 	Wt::WMessageBox *messageBox;
 
@@ -229,135 +229,9 @@ if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fro
 	std::string changedSubscriberName = "";
 	Wt::WTreeNode *selected_node; // operator* returns contents of an interator
 	std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
+
 		if (!highlightedRows.empty())
 					{
-
-
-
-			//repo->setLink(pdf);
-
-		ui->CHECK_pop_tab_mi->setHidden(false);
-						ui->CHECK_pop_tab_mi->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
-						ui->main_tabs->setCurrentIndex(3);
-
-						ui->CHECK_user_treeTable->clear();
-						ui->CHECK_user_treeTable->refresh();
-						Wt::WResource *pdf = new ReportResource(ui->CHECK_pop_tab);
-
-												Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf", ui->CHECK_pop_tab);
-												button2->setLink(pdf);
-
-						ui->CHECK_user_treeTable->setHeaderCount(1);
-
-
-						ReportResource2 *d=new ReportResource2("WHY");
-						std::string temper=d->ret();
-						Wt::WPushButton *button = new Wt::WPushButton(temper, ui->CHECK_pop_tab);
-
-						ui->CHECK_user_treeTable->elementAt(0, 0)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Устройство")));
-						ui->CHECK_user_treeTable->elementAt(0, 1)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Запись")));
-						ui->CHECK_user_treeTable->elementAt(0, 2)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Тип")));
-						ui->CHECK_user_treeTable->elementAt(0, 3)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер А")));
-						ui->CHECK_user_treeTable->elementAt(0, 4)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер Б")));
-						ui->CHECK_user_treeTable->elementAt(0, 5)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Дата")));
-					    ui->CHECK_user_treeTable->elementAt(0, 6)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Время")));
-						ui->CHECK_user_treeTable->elementAt(0, 7)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Код")));
-					    ui->CHECK_user_treeTable->elementAt(0, 8)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Абонент")));
-						ui->CHECK_user_treeTable->elementAt(0, 9)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Откуда")));
-						ui->CHECK_user_treeTable->elementAt(0, 10)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Город")));
-			     		ui->CHECK_user_treeTable->elementAt(0, 11)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Категория")));
-						ui->CHECK_user_treeTable->elementAt(0, 12)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Секунд вызова")));
-			     		ui->CHECK_user_treeTable->elementAt(0, 13)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Стоимость")));
-
-			     		for (std::set<Wt::WTreeNode* >::iterator i = highlightedRows.begin(); i != highlightedRows.end(); ++i)
-			     					{
-			     					  selected_node = *i;
-			     					}
-                      changedSubscriberName = selected_node->label()->text().toUTF8();
-
-			       highlightedRows.clear();
-
-
-mysql_init(&mysql);
-conn=mysql_real_connect(&mysql, server, user, password, database, 0, 0, 0);
-mysql_query(&mysql,"SET NAMES 'UTF8'");
-
-			     	if(conn==NULL){
-			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
-			     	if(conn==NULL){
-			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
-
-			     	std::string mysql_subscriber_all_table_data = "SELECT c.*,full_name FROM account_database.subscriber "
-			     			" AS a INNER JOIN account_database.phone_numbers AS b INNER JOIN account_database.ama_data AS "
-			     			"c ON a.subscriber_id=b.subscriber_id WHERE full_name='"+changedSubscriberName+"' "
-			     					"AND (b.number=c.numberB OR b.number=c.numberA) "
-			     					"AND year(c.start_date)=year(str_to_date('"+ResulYearCombo+"','%Y')) AND month(c.start_date)=month(str_to_date('"+ResulMonthCombo_index_string+"','%m')) ";
-
-			     				int row_number = 0;
-			     				query_state=mysql_query(conn, mysql_subscriber_all_table_data.c_str());
-			     				if(query_state!=0)
-			     				{
-			     				   std::cout<<mysql_error(conn)<<std::endl<<std::endl;
-			     				}
-			     				std::string TypeOfcall="";
-			     				res=mysql_store_result(conn);
-			     				while((row=mysql_fetch_row(res))!=NULL)
-			     				{row_number++;
-
-			     				if (Wt::WString::fromUTF8(row[11])=="common") TypeOfcall="Городской";
-			     				if (Wt::WString::fromUTF8(row[11])=="outgoing mobile") TypeOfcall="Входяший";
-			     				if (Wt::WString::fromUTF8(row[11])=="international") TypeOfcall="Междугородный";
-
-
-
-			     				new Wt::WText(Wt::WString::fromUTF8("Учет телефонных звонков"), ui->CHECK_user_treeTable->elementAt(row_number, 0));
-			     				new Wt::WText(Wt::WString::fromUTF8("Обычный"), ui->CHECK_user_treeTable->elementAt(row_number, 1));
-			     				new Wt::WText(Wt::WString::fromUTF8(row[1]), ui->CHECK_user_treeTable->elementAt(row_number, 3));
-			     				new Wt::WText(Wt::WString::fromUTF8(row[2]), ui->CHECK_user_treeTable->elementAt(row_number, 4));
-			     				new Wt::WText(Wt::WString::fromUTF8(row[3]), ui->CHECK_user_treeTable->elementAt(row_number, 5));
-			     				new Wt::WText(Wt::WString::fromUTF8(row[4]), ui->CHECK_user_treeTable->elementAt(row_number, 6));
-			     				new Wt::WText(Wt::WString::fromUTF8(changedSubscriberName), ui->CHECK_user_treeTable->elementAt(row_number, 8));
-			     				new Wt::WText(Wt::WString::fromUTF8(TypeOfcall), ui->CHECK_user_treeTable->elementAt(row_number, 2));
-			     				}
-			     				ui->CHECK_user_treeTable->refresh();
-			     				mysql_free_result(res);
-			     				mysql_close(conn);
-
-
-
-
-				} else
-				{
-					messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Не выбран абонент"), Wt::Information, Wt::Yes | Wt::No);
-					messageBox->buttonClicked().connect(std::bind([=] () {
-					delete messageBox;
-					}));
-
-					messageBox->show();
-				}}
-
-
-if (Wt::WString::fromUTF8("Netflow трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
-
-	Wt::WMessageBox *messageBox;
-
-	//check year
-	std::string ResulYearCombo="";
-	ResulYearCombo=ui->year_combo_box->currentText().toUTF8();
-	//check month
-	int ResulMonthCombo_index;
-	ResulMonthCombo_index=ui->month_combo_box->currentIndex();ResulMonthCombo_index++;
-	std::string ResulMonthCombo_index_string=std::to_string(ResulMonthCombo_index);
-
-
-
-	std::string changedSubscriberName = "";
-	Wt::WTreeNode *selected_node; // operator* returns contents of an interator
-	std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
-		if (!highlightedRows.empty())
-					{
-
-
 
 			Wt::WContainerWidget * CHECK_pop_tab_Temp = new Wt::WContainerWidget(ui->container_cp);
 			Wt::WMenuItem * CHECK_pop_tab_mi_temp = ui->main_tabs->addTab(CHECK_pop_tab_Temp, Wt::WString::fromUTF8(""));;
@@ -368,32 +242,49 @@ if (Wt::WString::fromUTF8("Netflow трафик")==Wt::WString::fromUTF8(ResultO
 			Wt::WContainerWidget *service_table_container = new Wt::WContainerWidget(CHECK_pop_tab_Temp);
 			service_table_container->setHtmlTagName("div");
 			service_table_container->setHeight(Wt::WLength("800px"));
+
 			service_table_container->setOverflow(Wt::WContainerWidget::Overflow::OverflowAuto, Wt::Orientation::Vertical);
 
 			CHECK_user_treeTablef = new Wt::WTable(service_table_container);
 			CHECK_user_treeTablef->setId("CHECK_user_treeTable");
-			CHECK_user_treeTablef->setStyleClass(Wt::WString::fromUTF8("table table-bordered table-striped table-hover"));
+			CHECK_user_treeTablef->setStyleClass(Wt::WString::fromUTF8("table table-bordered table-striped table-hover table-condensed"));
 			CHECK_user_treeTablef->setInline(0);
 			CHECK_user_treeTablef->setHeaderCount(1, Wt::Orientation::Horizontal);
 			CHECK_user_treeTablef->setHeaderCount(1, Wt::Orientation::Vertical);
 
 
+			for (std::set<Wt::WTreeNode* >::iterator i = highlightedRows.begin(); i != highlightedRows.end(); ++i)
+							     					{
+							     					  selected_node = *i;
+							     					}
+				                      changedSubscriberName = selected_node->label()->text().toUTF8();
+		std::string Obriv=" ";
+		for (auto single_char:changedSubscriberName){
+			if (single_char!=' ') Obriv+=single_char;
+			else break;
+		 }
+
+		CHECK_pop_tab_mi_temp->setText(Wt::WString::fromUTF8(ResultOfoperationmeny+Obriv));
+
+					ui->main_tabs->setCurrentIndex(ui->main_tabs->indexOf(CHECK_pop_tab_Temp));
+
+					CHECK_user_treeTablef->clear();
+					CHECK_user_treeTablef->refresh();
 
 
-			CHECK_pop_tab_mi_temp->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
+					CHECK_user_treeTablef->setHeaderCount(1);
 
-			ui->main_tabs->setCurrentIndex(ui->main_tabs->indexOf(CHECK_pop_tab_Temp));
+					/*
+					//PDF
+						Wt::WResource *pdf = new ReportResource(CHECK_pop_tab_Temp);
 
-			CHECK_user_treeTablef->clear();
-			CHECK_user_treeTablef->refresh();
+												Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf",CHECK_pop_tab_Temp);
+												button2->setLink(pdf);
+					//PDF
+ */
 
 
-			CHECK_user_treeTablef->setHeaderCount(1);
-
-
-						ReportResource2 *d=new ReportResource2("WHY");
-						std::string temper=d->ret();
-						Wt::WPushButton *button = new Wt::WPushButton(temper, ui->CHECK_pop_tab);
+					if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
 
 						CHECK_user_treeTablef->elementAt(0, 0)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Устройство")));
 						CHECK_user_treeTablef->elementAt(0, 1)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Запись")));
@@ -401,13 +292,15 @@ if (Wt::WString::fromUTF8("Netflow трафик")==Wt::WString::fromUTF8(ResultO
 						CHECK_user_treeTablef->elementAt(0, 3)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер А")));
 						CHECK_user_treeTablef->elementAt(0, 4)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Номер Б")));
 						CHECK_user_treeTablef->elementAt(0, 5)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Дата")));
+					    CHECK_user_treeTablef->elementAt(0, 6)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Время")));
+						CHECK_user_treeTablef->elementAt(0, 7)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Код")));
+					    CHECK_user_treeTablef->elementAt(0, 8)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Абонент")));
+						CHECK_user_treeTablef->elementAt(0, 9)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Откуда")));
+						CHECK_user_treeTablef->elementAt(0, 10)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Город")));
+			     		CHECK_user_treeTablef->elementAt(0, 11)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Категория")));
+						CHECK_user_treeTablef->elementAt(0, 12)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Секунд вызова")));
+			     		CHECK_user_treeTablef->elementAt(0, 13)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Стоимость")));
 
-
-			     		for (std::set<Wt::WTreeNode* >::iterator i = highlightedRows.begin(); i != highlightedRows.end(); ++i)
-			     					{
-			     					  selected_node = *i;
-			     					}
-                      changedSubscriberName = selected_node->label()->text().toUTF8();
 
 			       highlightedRows.clear();
 
@@ -442,18 +335,91 @@ mysql_query(&mysql,"SET NAMES 'UTF8'");
 			     				if (Wt::WString::fromUTF8(row[11])=="outgoing mobile") TypeOfcall="Входяший";
 			     				if (Wt::WString::fromUTF8(row[11])=="international") TypeOfcall="Междугородный";
 
-
-
 			     				new Wt::WText(Wt::WString::fromUTF8("Учет телефонных звонков"), CHECK_user_treeTablef->elementAt(row_number, 0));
 			     				new Wt::WText(Wt::WString::fromUTF8("Обычный"), CHECK_user_treeTablef->elementAt(row_number, 1));
 			     				new Wt::WText(Wt::WString::fromUTF8(row[1]), CHECK_user_treeTablef->elementAt(row_number, 3));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[2]), CHECK_user_treeTablef->elementAt(row_number, 4));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[3]), CHECK_user_treeTablef->elementAt(row_number, 5));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[4]), CHECK_user_treeTablef->elementAt(row_number, 6));
+			     				new Wt::WText(Wt::WString::fromUTF8(changedSubscriberName), CHECK_user_treeTablef->elementAt(row_number, 8));
+			     				new Wt::WText(Wt::WString::fromUTF8(TypeOfcall), CHECK_user_treeTablef->elementAt(row_number, 2));
+			     				}
+			     				CHECK_user_treeTablef->refresh();
+			     				mysql_free_result(res);
+			     				mysql_close(conn);
+					}
+
+
+					if (Wt::WString::fromUTF8("Netflow трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+
+
+						CHECK_user_treeTablef->elementAt(0, 0)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Устройство")));
+						CHECK_user_treeTablef->elementAt(0, 1)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Источник IP")));
+						CHECK_user_treeTablef->elementAt(0, 2)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Порт Источника")));
+						CHECK_user_treeTablef->elementAt(0, 3)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Цель IP")));
+						CHECK_user_treeTablef->elementAt(0, 4)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Порт назначения")));
+						CHECK_user_treeTablef->elementAt(0, 5)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Протокол")));
+						CHECK_user_treeTablef->elementAt(0, 6)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Дата/Время")));
+						CHECK_user_treeTablef->elementAt(0, 7)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Байт передано")));
+						CHECK_user_treeTablef->elementAt(0, 8)->addWidget(new Wt::WText(Wt::WString::fromUTF8("Абонент")));
+
+
+
+
+			       highlightedRows.clear();
+
+
+mysql_init(&mysql);
+conn=mysql_real_connect(&mysql, server, user, password, database, 0, 0, 0);
+mysql_query(&mysql,"SET NAMES 'UTF8'");
+
+			     	if(conn==NULL){
+			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
+			     	if(conn==NULL){
+			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
+
+
+
+			     	std::string mysql_subscriber_all_table_data = "SELECT c.receive_date,c.source_address,Sum(c.total_bytes),full_name "
+			     			"FROM account_database.subscriber AS a INNER JOIN account_database.ip_addresses  AS b "
+			     			"INNER JOIN account_database.netflow_data AS c ON a.subscriber_id=b.subscriber_id  "
+			     			"WHERE b.ip_address=c.source_address AND full_name='"+changedSubscriberName+"' "
+			     			"AND year(c.receive_date)=year(str_to_date('"+ResulYearCombo+"','%Y')) AND month(c.receive_date)=month(str_to_date('"+ResulMonthCombo_index_string+"','%m')) "
+			     					"group by DATE_FORMAT(c.receive_date, '%d')";
+
+
+
+			     				int row_number = 0;
+			     				query_state=mysql_query(conn, mysql_subscriber_all_table_data.c_str());
+			     				if(query_state!=0)
+			     				{
+			     				   std::cout<<mysql_error(conn)<<std::endl<<std::endl;
+			     				}
+			     				std::string TypeOfcall="";
+			     				res=mysql_store_result(conn);
+			     				while((row=mysql_fetch_row(res))!=NULL)
+			     				{row_number++;
+
+
+			     				new Wt::WText(Wt::WString::fromUTF8("Netflow трафик"), CHECK_user_treeTablef->elementAt(row_number, 0));
+			     				new Wt::WText(Wt::WString::fromUTF8("0.0.0.0"), CHECK_user_treeTablef->elementAt(row_number, 1));
+			     				new Wt::WText(Wt::WString::fromUTF8("0"), CHECK_user_treeTablef->elementAt(row_number, 2));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[1]), CHECK_user_treeTablef->elementAt(row_number, 3));
+			     				new Wt::WText(Wt::WString::fromUTF8("0"), CHECK_user_treeTablef->elementAt(row_number, 4));
+			     				new Wt::WText(Wt::WString::fromUTF8("0"), CHECK_user_treeTablef->elementAt(row_number, 5));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[0]), CHECK_user_treeTablef->elementAt(row_number, 6));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[2]), CHECK_user_treeTablef->elementAt(row_number, 7));
+			     				new Wt::WText(Wt::WString::fromUTF8(row[3]), CHECK_user_treeTablef->elementAt(row_number, 8));
 
 			     				}
 			     				CHECK_user_treeTablef->refresh();
-
-
 			     				mysql_free_result(res);
 			     				mysql_close(conn);
+
+					}
+
+
+
 
 
 

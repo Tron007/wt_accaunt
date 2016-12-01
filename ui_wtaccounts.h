@@ -1994,7 +1994,7 @@ public:
 							information_text_area_edit_user_tab->setRows(8);
 						}
 					}
-					CHECK_pop_tab = new Wt::WContainerWidget(container_cp);
+					/*CHECK_pop_tab = new Wt::WContainerWidget(container_cp);
 					CHECK_pop_tab_mi = main_tabs->addTab(CHECK_pop_tab, Wt::WString::fromUTF8(""));
 					CHECK_pop_tab->setId("CHECK_pop_tab");
 					CHECK_pop_tab->setStyleClass(Wt::WString::fromUTF8(""));
@@ -2008,18 +2008,11 @@ public:
 						service_table_container->setHeight(Wt::WLength("800px"));
 						service_table_container->setOverflow(Wt::WContainerWidget::Overflow::OverflowAuto, Wt::Orientation::Vertical);
 
-						Wt::WPushButton *repo = new Wt::WPushButton(Wt::WString::fromUTF8("Отчет"), CHECK_pop_tab);
+						//Wt::WPushButton *repo = new Wt::WPushButton(Wt::WString::fromUTF8("Отчет"), CHECK_pop_tab);
 
 						//Wt::WResource *pdf = new extern ReportResource();
 
-
-						CHECK_user_treeTable = new Wt::WTable(service_table_container);
-						CHECK_user_treeTable->setId("CHECK_user_treeTable");
-						CHECK_user_treeTable->setStyleClass(Wt::WString::fromUTF8("table table-bordered table-striped table-hover"));
-						CHECK_user_treeTable->setInline(0);
-						CHECK_user_treeTable->setHeaderCount(1, Wt::Orientation::Horizontal);
-						CHECK_user_treeTable->setHeaderCount(1, Wt::Orientation::Vertical);
-					}
+					}*/
 				}
 			}
 		}
