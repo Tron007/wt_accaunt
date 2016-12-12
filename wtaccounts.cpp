@@ -45,9 +45,14 @@ WtAccounts::WtAccounts(const Wt::WEnvironment& env) : Wt::WApplication(env), ui(
 	//ui->nv_menu_item1_mi->clicked().connect(boost::bind(&WtAccounts::subscriber_show_operation_tab, this, "create"));
 	//ui->nv_menu_item2_mi->clicked().connect(boost::bind(&WtAccounts::subscriber_show_operation_tab, this, "edit"));
 
-	ui->p_account_operation_split_button_popup->itemSelected().connect(boost::bind(&WtAccounts::p_account_operation_CHECK, this, "create")); //Button for ama data
+	//Drop out M (Ama data,Netflow data) (make report not ready)
+	ui->p_account_operation_split_button_popup->itemSelected().connect(boost::bind(&WtAccounts::p_account_operation_CHECK, this, "PopUp"));
 
+    //Search
+	ui->user_search_edit->changed().connect(boost::bind(&WtAccounts::Search_tree_Names, this, "Search"));
+	ui->user_search_button->clicked().connect(boost::bind(&WtAccounts::Search_tree_Names, this, "Search"));
 
+	///
 
 	ui->user_full_name_button->clicked().connect(boost::bind(&WtAccounts::subscriber_name_dialog, this, "create"));
 	ui->user_full_name_button_edit_user_tab->clicked().connect(boost::bind(&WtAccounts::subscriber_name_dialog, this, "edit"));
@@ -205,6 +210,64 @@ int dor=0;
 // zone fixed, clear function
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+//Search_tree_Names
+extern void WtAccounts::Search_tree_Names(std::string operation_name) {
+
+
+	std::string ResultOf_Search="";
+	ResultOf_Search=ui->user_search_edit->text().toUTF8();
+
+	if (ResultOf_Search==""){subscriber_show_operation_tab("view");}
+	else
+	{
+		mysql_init(&mysql);
+	conn=mysql_real_connect(&mysql, server, user, password, database, 0, 0, 0);
+	if(conn==NULL)
+	{
+	    std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;
+	}
+	mysql_query(&mysql,"SET NAMES 'UTF8'");
+
+
+	ui->user_treeTable->setStyleClass(Wt::WString::fromUTF8("Wt-treetable col-lg-12 col-md-12"));
+	ui->user_treeTable->tree()->setSelectionMode(Wt::SingleSelection);
+	//ui->user_treeTable->addColumn(Wt::WString::fromUTF8("Абонентов"), 100);
+
+
+    ui->user_tree_root = new Wt::WTreeTableNode(Wt::WString::fromUTF8(ResultOf_Search));
+	ui->user_treeTable->setTreeRoot(ui->user_tree_root, Wt::WString::fromUTF8("Поиск"));
+
+    Wt::WTreeTableNode *tree_node;
+
+					std::string mysql_get_subscriber_fullName = " SELECT full_name  FROM account_database.subscriber   WHERE locate('"+ResultOf_Search+"',full_name)>0 UNION ALL "
+							"SELECT full_name  FROM account_database.subscriber AS a INNER JOIN account_database.phone_numbers AS p ON a.subscriber_id=p.subscriber_id  WHERE locate('"+ResultOf_Search+"', p.number)>0 UNION ALL "
+									" SELECT full_name  FROM account_database.subscriber AS a INNER JOIN account_database.ip_addresses AS i ON a.subscriber_id=i.subscriber_id  WHERE locate('"+ResultOf_Search+"', i.ip_address)>0";
+					std::cout<<"Trying to Search "<<ResultOf_Search<<std::endl<<std::endl;
+
+						query_state=mysql_query(conn, mysql_get_subscriber_fullName.c_str());
+
+						if(query_state!=0)
+						{
+						   std::cout<<mysql_error(conn)<<std::endl<<std::endl;
+						}
+
+						add_res=mysql_store_result(conn);
+						while ((add_row=mysql_fetch_row(add_res))!=NULL)
+						{
+						tree_node = new Wt::WTreeTableNode(Wt::WString::fromUTF8(add_row[0]), 0, ui->user_tree_root);
+			            }
+
+					mysql_free_result(add_res);
+					mysql_close(conn);
+
+					ui->user_tree_root->expand();
+	}
+
+
+
+}
+//
+
 // function for operation on check
 extern void WtAccounts::p_account_operation_CHECK(std::string operation_name)
 {
@@ -258,11 +321,20 @@ if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fro
 							     					  selected_node = *i;
 							     					}
 				                      changedSubscriberName = selected_node->label()->text().toUTF8();
+
 		std::string Obriv=" ";
-		for (auto single_char:changedSubscriberName){
+		 std::size_t pos_for_Obriv;
+		for(std::string::iterator it = changedSubscriberName.begin(); it != changedSubscriberName.end(); ++it) {
+
+
+		}
+
+		pos_for_Obriv = changedSubscriberName.find(' ');
+		Obriv += changedSubscriberName.substr(0,pos_for_Obriv);
+		/*for (auto single_char:changedSubscriberName){
 			if (single_char!=' ') Obriv+=single_char;
 			else break;
-		 }
+		 }*/
 
 		CHECK_pop_tab_mi_temp->setText(Wt::WString::fromUTF8(ResultOfoperationmeny+Obriv));
 
@@ -311,8 +383,7 @@ mysql_query(&mysql,"SET NAMES 'UTF8'");
 
 			     	if(conn==NULL){
 			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
-			     	if(conn==NULL){
-			     		std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
+
 
 			     	std::string mysql_subscriber_all_table_data = "SELECT c.*,full_name FROM account_database.subscriber "
 			     			" AS a INNER JOIN account_database.phone_numbers AS b INNER JOIN account_database.ama_data AS "
@@ -508,7 +579,6 @@ extern void WtAccounts::subscriber_show_operation_tab(std::string operation_name
 
 
 
-
 		mysql_init(&mysql);
 		conn=mysql_real_connect(&mysql, server, user, password, database, 0, 0, 0);
 		if(conn==NULL)
@@ -555,7 +625,7 @@ extern void WtAccounts::subscriber_show_operation_tab(std::string operation_name
 				tree_node = new Wt::WTreeTableNode(Wt::WString::fromUTF8(add_row[0]), 0, ui->user_tree_group);
 			}
 		}
-
+		//ui->user_tree_group->clearSides();
 		mysql_free_result(res);
 		mysql_free_result(add_res);
 		mysql_close(conn);

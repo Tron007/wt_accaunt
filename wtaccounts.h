@@ -110,6 +110,8 @@ public:
 
 	void superrefresh();
     void p_account_operation_CHECK(std::string operation_name);
+    void Search_tree_Names(std::string operation_name);
+
 	void subscriber_show_operation_tab(std::string operation_name);
 	void subscriber_name_dialog(std::string operation_name);
 	void subscriber_group_dialog(std::string operation_name);
