@@ -45,11 +45,11 @@ WtAccounts::WtAccounts(const Wt::WEnvironment& env) : Wt::WApplication(env), ui(
 	//ui->nv_menu_item1_mi->clicked().connect(boost::bind(&WtAccounts::subscriber_show_operation_tab, this, "create"));
 	//ui->nv_menu_item2_mi->clicked().connect(boost::bind(&WtAccounts::subscriber_show_operation_tab, this, "edit"));
 
-	//Drop out M (Ama data,Netflow data) (make report not ready)
+	//Drop out M (Ama data,Netflow data)(make and configure report)
 	ui->p_account_operation_split_button_popup->itemSelected().connect(boost::bind(&WtAccounts::p_account_operation_CHECK, this, "PopUp"));
 
     //Search
-	ui->user_search_edit->changed().connect(boost::bind(&WtAccounts::Search_tree_Names, this, "Search"));
+	//ui->user_search_edit->changed().connect(boost::bind(&WtAccounts::Search_tree_Names, this, "Search"));
 	ui->user_search_button->clicked().connect(boost::bind(&WtAccounts::Search_tree_Names, this, "Search"));
 
 	///
@@ -217,7 +217,8 @@ extern void WtAccounts::Search_tree_Names(std::string operation_name) {
 	std::string ResultOf_Search="";
 	ResultOf_Search=ui->user_search_edit->text().toUTF8();
 
-	if (ResultOf_Search==""){subscriber_show_operation_tab("view");}
+	if (ResultOf_Search=="" || ResultOf_Search==" "){subscriber_show_operation_tab("view");
+	}
 	else
 	{
 		mysql_init(&mysql);
@@ -266,16 +267,17 @@ extern void WtAccounts::Search_tree_Names(std::string operation_name) {
 
 
 }
-//
+//End of Search
 
-// function for operation on check
-extern void WtAccounts::p_account_operation_CHECK(std::string operation_name)
+
+
+extern void WtAccounts::p_account_operation_Data(std::string operation_name)
 {
+//get name of M that pressed
 std::string ResultOfoperationmeny="";
 ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text().toUTF8();
 
-
-if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny) || Wt::WString::fromUTF8("Netflow трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+//First check(if just table data) creat table 1st then perfom another function
 
 	Wt::WMessageBox *messageBox;
 
@@ -293,8 +295,6 @@ if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fro
 	Wt::WTreeNode *selected_node; // operator* returns contents of an interator
 	std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
 
-		if (!highlightedRows.empty())
-					{
 
 			Wt::WContainerWidget * CHECK_pop_tab_Temp = new Wt::WContainerWidget(ui->container_cp);
 			Wt::WMenuItem * CHECK_pop_tab_mi_temp = ui->main_tabs->addTab(CHECK_pop_tab_Temp, Wt::WString::fromUTF8(""));;
@@ -322,13 +322,17 @@ if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fro
 							     					}
 				                      changedSubscriberName = selected_node->label()->text().toUTF8();
 
+
+		  //for addition name in tab
 		std::string Obriv=" ";
 		 std::size_t pos_for_Obriv;
+		 /*
 		for(std::string::iterator it = changedSubscriberName.begin(); it != changedSubscriberName.end(); ++it) {
 
 
-		}
+		}*/
 
+		//for addition name in tab
 		pos_for_Obriv = changedSubscriberName.find(' ');
 		Obriv += changedSubscriberName.substr(0,pos_for_Obriv);
 		/*for (auto single_char:changedSubscriberName){
@@ -346,14 +350,15 @@ if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fro
 
 					CHECK_user_treeTablef->setHeaderCount(1);
 
-					/*
+/*
 					//PDF
-						Wt::WResource *pdf = new ReportResource(CHECK_pop_tab_Temp);
+				Wt::WResource *pdf = new ReportResource(CHECK_pop_tab_Temp);
 
-												Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf",CHECK_pop_tab_Temp);
-												button2->setLink(pdf);
+										Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf",CHECK_pop_tab_Temp);
+										//Wt::WPushButton *button3 = new Wt::WPushButton("wwwwwwwwwwww",ui->container_cp);
+										button2->setLink(pdf);
 					//PDF
- */
+*/
 
 
 					if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
@@ -487,7 +492,6 @@ mysql_query(&mysql,"SET NAMES 'UTF8'");
 			     				mysql_free_result(res);
 			     				mysql_close(conn);
 
-					}
 
 
 
@@ -495,18 +499,115 @@ mysql_query(&mysql,"SET NAMES 'UTF8'");
 
 
 
-				} else
-				{
-					messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Не выбран абонент"), Wt::Information, Wt::Yes | Wt::No);
-					messageBox->buttonClicked().connect(std::bind([=] () {
-					delete messageBox;
-					}));
 
-					messageBox->show();
 				}}
+//end of func of showing data (netflow calls)
 
+
+//func to make creat report
+extern void WtAccounts::p_account_operation_create_Report(std::string operation_name)
+{
+
+	Wt::WMessageBox *messageBox;
+
+		//check year
+		std::string ResulYearCombo="";
+		ResulYearCombo=ui->year_combo_box->currentText().toUTF8();
+		//check month
+		int ResulMonthCombo_index;
+		ResulMonthCombo_index=ui->month_combo_box->currentIndex();ResulMonthCombo_index++;
+		std::string ResulMonthCombo_index_string=std::to_string(ResulMonthCombo_index);
+
+		std::string ResultOfoperationmeny="";
+		ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text().toUTF8();
+
+		/*
+		std::string changedSubscriberName = "";
+		Wt::WTreeNode *selected_node; // operator* returns contents of an interator
+		std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
+
+		//get name that selected
+		for (std::set<Wt::WTreeNode* >::iterator i = highlightedRows.begin(); i != highlightedRows.end(); ++i)
+									     					{
+									     					  selected_node = *i;
+									     					}
+			changedSubscriberName = selected_node->label()->text().toUTF8();
+			*/
+
+			//creat tab
+				Wt::WContainerWidget * CHECK_pop_tab_Temp = new Wt::WContainerWidget(ui->container_cp);
+				Wt::WMenuItem * CHECK_pop_tab_mi_temp = ui->main_tabs->addTab(CHECK_pop_tab_Temp, Wt::WString::fromUTF8(""));;
+				Wt::WTable *CHECK_user_treeTablef;
+				CHECK_pop_tab_mi_temp->setCloseable(true);
+				CHECK_pop_tab_mi_temp->enable();
+
+			 CHECK_pop_tab_mi_temp->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
+
+			ui->main_tabs->setCurrentIndex(ui->main_tabs->indexOf(CHECK_pop_tab_Temp));
+
+			Wt::WContainerWidget *service_table_container = new Wt::WContainerWidget(CHECK_pop_tab_Temp);
+
+		// Add an external style sheet to the application.
+		//Wt::WApplication::instance()->useStyleSheet("/resources/Report.css");
+
+			Wt::WApplication::instance()->useStyleSheet("/resources/fgd.css");
+		// The style sheet should be applied to this container only.
+		// The class .CSS-example is used as selector.
+		//service_table_container->setStyleClass("CSS-example");
+
+		service_table_container->setHtmlTagName("div");
+		service_table_container->setHeight(Wt::WLength("842px"));
+		service_table_container->setWidth(Wt::WLength("595px"));
+
+	    Wt::WContainerWidget *topmid = new Wt::WContainerWidget(service_table_container);
+		Wt::WVBoxLayout *vbox = new Wt::WVBoxLayout();
+		topmid->setLayout(vbox);
+			//,,,Wt::AlignmentFlag::AlignRight
+
+		//	Wt::WGridLayout *grid = new Wt::WGridLayout();
+		//	service_table_container->setLayout(grid);
+
+		///1
+		//Wt::WContainerWidget *topmid2 = new Wt::WContainerWidget(service_table_container);
+		//Wt::WVBoxLayout *vbox2 = new Wt::WVBoxLayout();
+		//topmid2->setLayout(vbox2);
+
+
+
+			Wt::WText *user_type_text;
+			user_type_text = new Wt::WText(service_table_container);
+
+			std::string d("12435445444343");
+
+			Wt::WText *item = new Wt::WText(d);
+			Wt::WText *item2 = new Wt::WText(Wt::WString::fromUTF8("Счет извешение"));
+		//	item2->setId("info");
+		   item2->setStyleClass("info");
+		//	item2->setTextAlignment(Wt::AlignmentFlag::AlignCenter);
+
+			// item2->setStyleClass("info");
+			//user_type_text->setInline(0);
+			user_type_text->setTextFormat((Wt::TextFormat)0);
+			user_type_text->setText(Wt::WString::fromUTF8("Тип абонента:") );
+			user_type_text->setStyleClass("info");
+
+			  Wt::WResource *pdf = new ReportResource(service_table_container);
+
+			  Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf",service_table_container);
+
+			 button2->setLink(pdf);
+
+
+
+
+}
+
+//func to make report
+extern void WtAccounts::p_account_operation_Report(std::string operation_name)
+{
+
+//NOT READY (func for another buttons)!!!!!
 // show dialog window where you manage reports (create)
-if (Wt::WString::fromUTF8("Новый отчет")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
 
 
 
@@ -551,18 +652,50 @@ Wt::WPushButton *add2_service_button = new Wt::WPushButton(Wt::WString::fromUTF8
 	                    dialog->finished().connect(std::bind([=] () {
 	                	if (dor==1)
 	                	{
-	                		WtAccounts::subscriber_show_operation_tab("edit");
+	                		WtAccounts::p_account_operation_create_Report("edit");
 
-	                	}else if (dor==2) {WtAccounts::subscriber_show_operation_tab("view");}
+	                	}else if (dor==2) {
+                                      WtAccounts::subscriber_show_operation_tab("view");}
 	                	else if (dor==3)  {WtAccounts::subscriber_show_operation_tab("create");}
-
+	                	else if (dor==0) {}
+	                	dor==0;
 	                	delete dialog;
 	                    }));
-}
-
 
 }
 
+// function for operation on check
+extern void WtAccounts::p_account_operation_CHECK(std::string operation_name)
+{
+	Wt::WMessageBox *messageBox;
+
+//get name of M that pressed
+std::string ResultOfoperationmeny="";
+ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text().toUTF8();
+
+std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
+if (!highlightedRows.empty())
+				{
+
+if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny) || Wt::WString::fromUTF8("Netflow трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+	p_account_operation_Data("Телефонный трафик");
+}
+if (Wt::WString::fromUTF8("Новый отчет")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+	p_account_operation_Report("Новый отчет");
+}
+				}
+else
+				{
+					messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Не выбран абонент"), Wt::Information, Wt::Yes | Wt::No);
+					messageBox->buttonClicked().connect(std::bind([=] () {
+					delete messageBox;
+					}));
+
+					messageBox->show();
+				}}
+
+
+///
 
 // function show required tab, depend on operation_name
 extern void WtAccounts::subscriber_show_operation_tab(std::string operation_name)

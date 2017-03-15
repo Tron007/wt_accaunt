@@ -14,8 +14,6 @@
 
 #include "ui_wtaccounts.h"
 
-
-
 //Below is the "Rendering HTML to PDF" code from the widget gallery, with the new container widget for a target.
 namespace {
     void HPDF_STDCALL error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no,
@@ -46,7 +44,7 @@ public:
     HPDF_UseUTFEncodings(pdf);
 
     renderReport(pdf);
- int ddsfd;
+    int ddsfd;
     HPDF_SaveToStream(pdf);
     unsigned int size = HPDF_GetStreamSize(pdf);
     HPDF_BYTE *buf = new HPDF_BYTE[size];
@@ -63,25 +61,79 @@ private:
   void renderReport(HPDF_Doc pdf)
   {
     std::stringstream ss;
+    std::stringstream buffer;
+
+
     _target->htmlText(ss);
     std::string out = ss.str();
     std::string out_id = _target->id();
     std::string out_parent_id = _target->parent()->id();
 
-    renderPdf(Wt::WString::fromUTF8(ss.str()), pdf);
+    std::string STRING;
+        std::ifstream infile("cssQ.txt");;
+
+        if ( infile )
+            {
+
+                buffer << infile.rdbuf();
+
+                infile.close();
+
+                // operations on the buffer...
+            }
+
+       // infile.open
+
+        std::string out3=buffer.str();
+        size_t f =out3.find("201611-001979");
+        out3.replace(f,std::string("This text is").length(), "Абдиль Жардибакев");
+
+    std::ofstream out2("output.txt");
+    out2 << out3;
+    out2.close();
+
+
+
+		//ss.str()
+  renderPdf(Wt::WString::fromUTF8(out3), pdf);
+   // renderPdf("<html><head></head><body><div style="text-align: center">centered content</div></body></html>", pdf);
+
+
   }
 
   void renderPdf(const Wt::WString& html, HPDF_Doc pdf)
   {
+
     HPDF_Page page = HPDF_AddPage(pdf);
     HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
 int d;
     Wt::Render::WPdfRenderer renderer(pdf, page);
-    renderer.setMargin(1);
-    renderer.setDpi(96);
+   renderer.useStyleSheet("/resources/fgd.css");
+
+    //renderer.st
+   //renderer.setMargin(0);
+  // renderer.setDpi(75);
     renderer.render(html);
+
   }
 };
+
+
+
+
+
+	// height = HPDF_Page_GetHeight (page);
+	// width = HPDF_Page_GetWidth (page);
+
+	 /* Print the title of the page (with positioning center). */
+	//    def_font = HPDF_GetFont (pdf, "Helvetica", NULL);
+	  //  HPDF_Page_SetFontAndSize (page, def_font, 24);
+
+	   // tw = HPDF_Page_TextWidth (page, page_title);
+	   // HPDF_Page_BeginText (page);
+	//    HPDF_Page_TextOut (page, width , height - 50, page_title);
+	 //   HPDF_Page_EndText (page);
+
 
 
 
@@ -109,7 +161,14 @@ public:
 	// ***
 
 	void superrefresh();
+
     void p_account_operation_CHECK(std::string operation_name);
+    //data
+    void p_account_operation_Data(std::string operation_name);
+    //report
+    void p_account_operation_Report(std::string operation_name);
+    void p_account_operation_create_Report(std::string operation_name);
+    //Serarch
     void Search_tree_Names(std::string operation_name);
 
 	void subscriber_show_operation_tab(std::string operation_name);

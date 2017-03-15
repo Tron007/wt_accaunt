@@ -54,8 +54,12 @@
 #include <Wt/WApplication>
 #include <Wt/WPainter>
 
+#include <Wt/WVBoxLayout>
+#include <Wt/WGridLayout>
 
-
+#include <fstream>
+#include <string>
+#include <iostream>
 
 class Ui_WtAccounts
 {
