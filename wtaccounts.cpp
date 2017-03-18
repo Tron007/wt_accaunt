@@ -205,6 +205,138 @@ int dor=0;
 
 
 
+//Below is the "Rendering HTML to PDF" code from the widget gallery, with the new container widget for a target.
+namespace {
+    void HPDF_STDCALL error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no,
+               void *user_data) {
+    fprintf(stderr, "libharu error: error_no=%04X, detail_no=%d\n",
+        (unsigned int) error_no, (int) detail_no);
+    }
+}
+
+class ReportResource : public Wt::WResource
+{
+public:
+	 std::string nate;
+	 std::string nate2;
+	 std::string nate3;
+
+  ReportResource(Wt::WContainerWidget* target, Wt::WObject* parent = 0)
+    : Wt::WResource(parent),
+    _target(NULL)
+  {
+    suggestFileName("report.pdf");
+    _target = target;
+  }
+
+  ReportResource(Wt::WContainerWidget* target,std::string name="",std::string Number="",std::string rewq="")
+      :nate(name),nate2(Number),nate3(rewq)
+    {
+	std::string Obriv=" ";
+	std::size_t pos_for_Obriv;
+
+	//for addition name in tab
+	pos_for_Obriv = nate.find(' ');
+	Obriv += nate.substr(0,pos_for_Obriv);
+
+
+      suggestFileName(Wt::WString::fromUTF8(Obriv)+".pdf");
+      _target = target;
+    }
+
+  virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
+  {
+    response.setMimeType("application/pdf");
+
+    HPDF_Doc pdf = HPDF_New(error_handler, 0);
+
+    // Note: UTF-8 encoding (for TrueType fonts) is only available since libharu 2.3.0 !
+    HPDF_UseUTFEncodings(pdf);
+
+    renderReport(pdf);
+    int ddsfd;
+    HPDF_SaveToStream(pdf);
+    unsigned int size = HPDF_GetStreamSize(pdf);
+    HPDF_BYTE *buf = new HPDF_BYTE[size];
+    HPDF_ReadFromStream (pdf, buf, &size);
+    HPDF_Free(pdf);
+    response.out().write((char*)buf, size);
+    delete[] buf;
+  }
+
+private:
+
+  Wt::WContainerWidget* _target;
+
+  void renderReport(HPDF_Doc pdf)
+  {
+    std::stringstream ss;
+    std::stringstream buffer;
+
+
+    _target->htmlText(ss);
+    std::string out = ss.str();
+    std::string out_id = _target->id();
+    std::string out_parent_id = _target->parent()->id();
+
+    std::string STRING;
+        std::ifstream infile("cssQ.txt");;
+
+        if ( infile )
+            {
+
+                buffer << infile.rdbuf();
+
+                infile.close();
+
+                // operations on the buffer...
+            }
+
+       // infile.open
+
+        std::string out3=buffer.str();
+        size_t f =out3.find("Name_w");
+        out3.replace(f,std::string("Name_w").length(), nate);
+
+        f =out3.find("personal_code");
+        out3.replace(f,std::string("personal_code").length(), nate2);
+
+        f =out3.find("req_code");
+        out3.replace(f,std::string("req_code").length(), nate3);
+        f =out3.find("req_code");
+        out3.replace(f,std::string("req_code").length(), nate3);
+
+    std::ofstream out2("output.txt");
+    out2 << out3;
+    out2.close();
+
+
+
+		//ss.str()
+  renderPdf(Wt::WString::fromUTF8(out3), pdf);
+
+
+
+  }
+
+  void renderPdf(const Wt::WString& html, HPDF_Doc pdf)
+  {
+
+    HPDF_Page page = HPDF_AddPage(pdf);
+    HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
+    int d;
+    Wt::Render::WPdfRenderer renderer(pdf, page);
+   renderer.useStyleSheet("/resources/fgd.css");
+
+    //renderer.st
+   //renderer.setMargin(0);
+  // renderer.setDpi(75);
+    renderer.render(html);
+
+  }
+};
+
+
 
 
 // zone fixed, clear function
@@ -521,7 +653,7 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 		std::string ResultOfoperationmeny="";
 		ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text().toUTF8();
 
-		/*
+
 		std::string changedSubscriberName = "";
 		Wt::WTreeNode *selected_node; // operator* returns contents of an interator
 		std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
@@ -532,7 +664,7 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 									     					  selected_node = *i;
 									     					}
 			changedSubscriberName = selected_node->label()->text().toUTF8();
-			*/
+
 
 			//creat tab
 				Wt::WContainerWidget * CHECK_pop_tab_Temp = new Wt::WContainerWidget(ui->container_cp);
@@ -547,51 +679,62 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 
 			Wt::WContainerWidget *service_table_container = new Wt::WContainerWidget(CHECK_pop_tab_Temp);
 
+			////
+
+			mysql_init(&mysql);
+			conn=mysql_real_connect(&mysql, server, user, password, database, 0, 0, 0);
+			mysql_query(&mysql,"SET NAMES 'UTF8'");
+
+			if(conn==NULL){
+			std::cout<<mysql_error(&mysql)<<std::endl<<std::endl;}
+
+
+
+			std::string mysql_subscriber_all_table_data = "SELECT * FROM  account_database.requisites WHERE subscriber_id IN "
+					"(SELECT subscriber_id FROM  account_database.subscriber WHERE full_name = '"+changedSubscriberName+"')";
+
+			query_state=mysql_query(conn, mysql_subscriber_all_table_data.c_str());
+			// set variables and form elements with data from mysql tables
+
+					if(query_state!=0)
+								   {
+								 std::cout<<mysql_error(conn)<<std::endl<<std::endl;
+								   }
+								   res=mysql_store_result(conn);
+								    std::cout<<"MySQL Values in the amaDB Table. Report"<<std::endl<<std::endl;
+								    row=mysql_fetch_row(res);
+
+						     				std::string Presonal_code="";
+						     				std::string agreement="";
+
+
+						     				Presonal_code=row[2];
+						     				agreement=row[7];
+
+
+
+
+						     				mysql_free_result(res);
+						     				mysql_close(conn);
+
+
+
+
+
+
+			////
+			//Use difrent css
 		// Add an external style sheet to the application.
 		//Wt::WApplication::instance()->useStyleSheet("/resources/Report.css");
-
-			Wt::WApplication::instance()->useStyleSheet("/resources/fgd.css");
+		//Wt::WApplication::instance()->useStyleSheet("/resources/fgd.css");
 		// The style sheet should be applied to this container only.
 		// The class .CSS-example is used as selector.
 		//service_table_container->setStyleClass("CSS-example");
 
-		service_table_container->setHtmlTagName("div");
-		service_table_container->setHeight(Wt::WLength("842px"));
-		service_table_container->setWidth(Wt::WLength("595px"));
-
-	    Wt::WContainerWidget *topmid = new Wt::WContainerWidget(service_table_container);
-		Wt::WVBoxLayout *vbox = new Wt::WVBoxLayout();
-		topmid->setLayout(vbox);
-			//,,,Wt::AlignmentFlag::AlignRight
-
-		//	Wt::WGridLayout *grid = new Wt::WGridLayout();
-		//	service_table_container->setLayout(grid);
-
-		///1
-		//Wt::WContainerWidget *topmid2 = new Wt::WContainerWidget(service_table_container);
-		//Wt::WVBoxLayout *vbox2 = new Wt::WVBoxLayout();
-		//topmid2->setLayout(vbox2);
 
 
-
-			Wt::WText *user_type_text;
-			user_type_text = new Wt::WText(service_table_container);
-
-			std::string d("12435445444343");
-
-			Wt::WText *item = new Wt::WText(d);
-			Wt::WText *item2 = new Wt::WText(Wt::WString::fromUTF8("Счет извешение"));
-		//	item2->setId("info");
-		   item2->setStyleClass("info");
-		//	item2->setTextAlignment(Wt::AlignmentFlag::AlignCenter);
-
-			// item2->setStyleClass("info");
-			//user_type_text->setInline(0);
-			user_type_text->setTextFormat((Wt::TextFormat)0);
-			user_type_text->setText(Wt::WString::fromUTF8("Тип абонента:") );
-			user_type_text->setStyleClass("info");
-
-			  Wt::WResource *pdf = new ReportResource(service_table_container);
+			// Wt::WResource *pdf = new ReportResource(service_table_container);
+			 Wt::WResource *pdf = new ReportResource(service_table_container,changedSubscriberName,Presonal_code,agreement);
 
 			  Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf",service_table_container);
 
