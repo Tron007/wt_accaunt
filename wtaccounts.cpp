@@ -220,7 +220,8 @@ public:
 	 std::string nate;
 	 std::string nate2;
 	 std::string nate3;
-
+	 int number;
+/*
   ReportResource(Wt::WContainerWidget* target, Wt::WObject* parent = 0)
     : Wt::WResource(parent),
     _target(NULL)
@@ -228,6 +229,14 @@ public:
     suggestFileName("report.pdf");
     _target = target;
   }
+*/
+   ReportResource(Wt::WContainerWidget* target,int d=0)
+	     :number(d)
+	   {
+	     suggestFileName("report.pdf");
+	     _target = target;
+	   }
+
 
   ReportResource(Wt::WContainerWidget* target,std::string name="",std::string Number="",std::string rewq="")
       :nate(name),nate2(Number),nate3(rewq)
@@ -250,8 +259,11 @@ public:
 
     HPDF_Doc pdf = HPDF_New(error_handler, 0);
 
-    // Note: UTF-8 encoding (for TrueType fonts) is only available since libharu 2.3.0 !
-    HPDF_UseUTFEncodings(pdf);
+	// Note: UTF-8 encoding (for TrueType fonts) is only available since libharu 2.3.0 !
+	HPDF_UseUTFEncodings(pdf);
+
+
+
 
     renderReport(pdf);
     int ddsfd;
@@ -326,12 +338,19 @@ private:
     HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
     int d;
     Wt::Render::WPdfRenderer renderer(pdf, page);
-   renderer.useStyleSheet("/resources/fgd.css");
+  // renderer.useStyleSheet("/resources/fgd.css");
+
+    const char *fontname;
+    HPDF_Font font;
+
+ //   fontname = HPDF_LoadTTFontFromFile(pdf, "FreeSans.ttf", HPDF_TRUE);
+ //   font = HPDF_GetFont(pdf, fontname, "UTF-8");
+  //  HPDF_Page_SetFontAndSize(page, font, 20.0);
 
     //renderer.st
    //renderer.setMargin(0);
   // renderer.setDpi(75);
-    renderer.render(html);
+   renderer.render(html);
 
   }
 };
@@ -707,19 +726,11 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 						     				std::string Presonal_code="";
 						     				std::string agreement="";
 
-
 						     				Presonal_code=row[2];
 						     				agreement=row[7];
 
-
-
-
 						     				mysql_free_result(res);
 						     				mysql_close(conn);
-
-
-
-
 
 
 			////
@@ -731,13 +742,13 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 		// The class .CSS-example is used as selector.
 		//service_table_container->setStyleClass("CSS-example");
 
+			Wt::WResource *pdf = new ReportResource(service_table_container,5);
 
-
-			// Wt::WResource *pdf = new ReportResource(service_table_container);
-			 Wt::WResource *pdf = new ReportResource(service_table_container,changedSubscriberName,Presonal_code,agreement);
+			// Wt::WResource *pdf = new ReportResource(service_table_container,changedSubscriberName,Presonal_code,agreement);
 
 			  Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf",service_table_container);
 
+			  //link to rendered  file
 			 button2->setLink(pdf);
 
 
