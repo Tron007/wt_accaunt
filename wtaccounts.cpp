@@ -51,6 +51,8 @@ WtAccounts::WtAccounts(const Wt::WEnvironment& env) : Wt::WApplication(env), ui(
     //Search
 	//ui->user_search_edit->changed().connect(boost::bind(&WtAccounts::Search_tree_Names, this, "Search"));
 	ui->user_search_button->clicked().connect(boost::bind(&WtAccounts::Search_tree_Names, this, "Search"));
+	//Save and close configure of Report
+	ui->save_close_button_report_edit->clicked().connect(boost::bind(&WtAccounts::Configure_edited_report_data_Report, this, "save"));
 
 	///
 
@@ -95,7 +97,7 @@ MYSQL_ROW add_row;
 // mysql connections settings
 const char *server="52.8.83.48";
 const char *user="007";
-const char *password="007";
+const char *password="Yeshimbetov^Karakalpak8";
 const char *database="account_database";
 
 int query_state;
@@ -221,7 +223,7 @@ public:
 	 std::string nate2;
 	 std::string nate3;
 	 int number;
-/*
+
   ReportResource(Wt::WContainerWidget* target, Wt::WObject* parent = 0)
     : Wt::WResource(parent),
     _target(NULL)
@@ -229,13 +231,14 @@ public:
     suggestFileName("report.pdf");
     _target = target;
   }
-*/
-   ReportResource(Wt::WContainerWidget* target,int d=0)
-	     :number(d)
-	   {
-	     suggestFileName("report.pdf");
-	     _target = target;
-	   }
+
+
+//   ReportResource(Wt::WContainerWidget* target,int d=0)
+//	     :number(d)
+//	   {
+//	     suggestFileName("report.pdf");
+//	     _target = target;
+//	   }
 
    ReportResource(Wt::WContainerWidget* target,std::string name="",std::string text="")
         :nate(name),nate2(text)
@@ -278,8 +281,6 @@ public:
 	HPDF_UseUTFEncodings(pdf);
 
 
-
-
     renderReport(pdf);
     int ddsfd;
     HPDF_SaveToStream(pdf);
@@ -300,7 +301,6 @@ private:
     std::stringstream ss;
 
 
-
     _target->htmlText(ss);
     std::string out = ss.str();
     std::string out_id = _target->id();
@@ -309,14 +309,8 @@ private:
     std::string STRING;
 
 
-
-
-
-
 		//ss.str()
   renderPdf(Wt::WString::fromUTF8(nate2), pdf);
-
-
 
   }
 
@@ -325,6 +319,7 @@ private:
 
     HPDF_Page page = HPDF_AddPage(pdf);
     HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
+   //HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_LANDSCAPE);
     int d;
     Wt::Render::WPdfRenderer renderer(pdf, page);
   // renderer.useStyleSheet("/resources/fgd.css");
@@ -334,13 +329,12 @@ private:
 
  //   fontname = HPDF_LoadTTFontFromFile(pdf, "FreeSans.ttf", HPDF_TRUE);
  //   font = HPDF_GetFont(pdf, fontname, "UTF-8");
-  //  HPDF_Page_SetFontAndSize(page, font, 20.0);
+   // HPDF_Page_SetFontAndSize(page, font, 8);
 
     //renderer.st
    //renderer.setMargin(0);
-  // renderer.setDpi(70);
+ // renderer.setDpi(110);
    renderer.render(html);
-
   }
 };
 
@@ -437,6 +431,10 @@ ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text
 	std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
 
 
+	//chek if any user selected
+	if (!highlightedRows.empty())
+					{
+
 			Wt::WContainerWidget * CHECK_pop_tab_Temp = new Wt::WContainerWidget(ui->container_cp);
 			Wt::WMenuItem * CHECK_pop_tab_mi_temp = ui->main_tabs->addTab(CHECK_pop_tab_Temp, Wt::WString::fromUTF8(""));;
 			Wt::WTable *CHECK_user_treeTablef;
@@ -491,15 +489,15 @@ ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text
 
 					CHECK_user_treeTablef->setHeaderCount(1);
 
-/*
+
 					//PDF
-				Wt::WResource *pdf = new ReportResource(CHECK_pop_tab_Temp);
+				Wt::WResource *pdf = new ReportResource(service_table_container,0);
 
 										Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf",CHECK_pop_tab_Temp);
 										//Wt::WPushButton *button3 = new Wt::WPushButton("wwwwwwwwwwww",ui->container_cp);
 										button2->setLink(pdf);
 					//PDF
-*/
+
 
 
 					if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
@@ -641,13 +639,87 @@ mysql_query(&mysql,"SET NAMES 'UTF8'");
 
 
 
-				}}
+				}
+					}
+					else
+									{
+										messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Не выбран абонент"), Wt::Information, Wt::Yes | Wt::No);
+										messageBox->buttonClicked().connect(std::bind([=] () {
+										delete messageBox;
+										}));
+
+										messageBox->show();
+									}
+
+
+					}
+
+
 //end of func of showing data (netflow calls)
+
+extern void WtAccounts::Configure_edited_report_data_Report(std::string operation_name){
+
+
+	if (operation_name=="save"){
+
+		std::ifstream infile("cssQ.txt");
+		std::string out3;
+		std::stringstream buffer;
+
+		if ( infile )
+		{
+			buffer << infile.rdbuf();
+			infile.close();
+			out3=buffer.str();
+			// operations on the buffer...
+		}
+
+
+		//	auto itr_text_search;
+
+		std::ofstream out2("output.txt");
+
+std::string Report_edit_temp_string1= out3.substr(out3.find("<!--First_Text-->")+std::string("<!--First_Text-->").length(),out3.find("<!--End_F_Text-->")-(out3.find("<!--First_Text-->")+std::string("<!--First_Text-->").length()));
+
+std::string Report_edit_temp_string2= out3.substr(out3.find("<!--Second_text2-->")+std::string("<!--Second_text2-->").length(),out3.find("<!--End_S_Text2-->")-(out3.find("<!--Second_text2-->")+std::string("<!--Second_text2-->").length()));
+
+out2<<ui->user_text_area_report_edit_1->text().toUTF8();
+out2<<std::endl;
+out2<<ui->user_text_area_report_edit_2->text().toUTF8();
+		//std::ofstream onfile("cssQ.txt");
+
+out2<<std::endl;
+
+		size_t f = out3.find("<!--First_Text-->");
+		out3.replace(f+std::string("<!--First_Text-->").length(),Report_edit_temp_string1.length(), ui->user_text_area_report_edit_1->text().toUTF8());
+		out2<<f;
+
+		out2<<std::endl;
+		f =out3.find("<!--Second_text2-->");
+		out2<<f;
+		out3.replace(f+std::string("<!--Second_text2-->").length(),Report_edit_temp_string2.length(), ui->user_text_area_report_edit_2->text().toUTF8());
+		std::ofstream fout("cssQ.txt");
+		fout.write(out3.c_str(), out3.size());
+		fout.close();
+		out2.close();
+
+		//ui->create_user_tab_mi_report_edit->setHidden(false);
+		//ui->main_tabs->setCurrentIndex(3);
+
+		ui->create_user_tab_mi_report_edit->setHidden(true);
+		ui->main_tabs->setCurrentIndex(0);
+
+	}
+
+
+}
 
 
 //func to make creat report
 extern void WtAccounts::p_account_operation_create_Report(std::string operation_name)
 {
+
+
 
 	Wt::WMessageBox *messageBox;
 
@@ -658,7 +730,7 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 		int ResulMonthCombo_index;
 		ResulMonthCombo_index=ui->month_combo_box->currentIndex();ResulMonthCombo_index++;
 		std::string ResulMonthCombo_index_string=std::to_string(ResulMonthCombo_index);
-
+		std::string ResulMonthCombo_text_string=ui->month_combo_box->currentText().toUTF8();
 		std::string ResultOfoperationmeny="";
 		ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text().toUTF8();
 
@@ -667,6 +739,8 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 		Wt::WTreeNode *selected_node; // operator* returns contents of an interator
 		std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
 
+		if (!highlightedRows.empty())
+						{
 		//get name that selected
 		for (std::set<Wt::WTreeNode* >::iterator i = highlightedRows.begin(); i != highlightedRows.end(); ++i)
 									     					{
@@ -677,14 +751,14 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 
 			//creat tab
 				Wt::WContainerWidget * CHECK_pop_tab_Temp = new Wt::WContainerWidget(ui->container_cp);
-				Wt::WMenuItem * CHECK_pop_tab_mi_temp = ui->main_tabs->addTab(CHECK_pop_tab_Temp, Wt::WString::fromUTF8(""));;
-				Wt::WTable *CHECK_user_treeTablef;
-				CHECK_pop_tab_mi_temp->setCloseable(true);
-				CHECK_pop_tab_mi_temp->enable();
+			//	Wt::WMenuItem * CHECK_pop_tab_mi_temp = ui->main_tabs->addTab(CHECK_pop_tab_Temp, Wt::WString::fromUTF8(""));;
+			//	Wt::WTable *CHECK_user_treeTablef;
+			//	CHECK_pop_tab_mi_temp->setCloseable(true);
+			//	CHECK_pop_tab_mi_temp->enable();
 
-			 CHECK_pop_tab_mi_temp->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
+			// CHECK_pop_tab_mi_temp->setText(Wt::WString::fromUTF8(ResultOfoperationmeny));
 
-			ui->main_tabs->setCurrentIndex(ui->main_tabs->indexOf(CHECK_pop_tab_Temp));
+			//ui->main_tabs->setCurrentIndex(ui->main_tabs->indexOf(CHECK_pop_tab_Temp));
 
 			Wt::WContainerWidget *service_table_container = new Wt::WContainerWidget(CHECK_pop_tab_Temp);
 
@@ -719,15 +793,10 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 								    if((row=mysql_fetch_row(res))!=NULL) {
 
 
-
-
-
 						     				Presonal_code=row[2];
 						     				agreement=row[7];}
 
 						     				mysql_free_result(res);
-
-
 
 
 
@@ -769,27 +838,53 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 
 
 		f =out3.find("year_month");
+		if (ResulMonthCombo_index_string.length()<2) ResulMonthCombo_index_string.insert (0,"0");
 		out3.replace(f,std::string("year_month").length(), ResulYearCombo+ResulMonthCombo_index_string);
 
+		f =out3.find("Report_time1");
+		out3.replace(f,std::string("Report_time1").length(), ResulMonthCombo_index_string+"."+ResulYearCombo+"г");
+
 		f =out3.find("month_w");
-		out3.replace(f,std::string("month_w").length(), ResulMonthCombo_index_string);
+		out3.replace(f,std::string("month_w").length(), ResulMonthCombo_text_string);
 
 		f =out3.find("year_n");
 		out3.replace(f,std::string("year_n").length(), ResulYearCombo);
 
 
-        int numberforskip=244;//244 = FULL text size  between <!--ServiceStart--> to <!--ServiceEnd-->
+
+		//adress replace
+		mysql_Data_for_report = "SELECT street FROM account_database.contacts WHERE subscriber_id "
+				"IN (SELECT subscriber_id FROM  account_database.subscriber WHERE full_name = '"+changedSubscriberName+"')";
+
+		query_state=mysql_query(conn, mysql_Data_for_report.c_str());
+
+		if(query_state!=0)
+					{
+					std::cout<<mysql_error(conn)<<std::endl<<std::endl;
+					}
+		res=mysql_store_result(conn);
+		if((row=mysql_fetch_row(res))!=NULL) {
+		std::string Adress_rep=row[0];
+		f =out3.find("Adress_");
+		out3.replace(f,std::string("Adress_").length(), Adress_rep);}
+
+		///
+
+        //code for adding service
+        int numberforskip=280;//244 = FULL text size  between <!--ServiceStart--> to <!--ServiceEnd--> (WARRNING depends on size of html part where service add)
 		std::string Service = out3.substr(out3.find("<!--ServiceStart-->")+std::string("<!--ServiceStart-->").length(),numberforskip);
 
 
 		mysql_Data_for_report = "SELECT description,quantity FROM account_database.subscriber_transaction WHERE subscriber_id"
-				" IN  (SELECT subscriber_id FROM  account_database.subscriber WHERE full_name = '"+changedSubscriberName+"')";
-				//		"AND  month(transaction_date)=month(str_to_date('"+ResulMonthCombo_index_string+"','%m')) AND year(transaction_date)=year(str_to_date('"+ResulYearCombo+"','%Y'))";
+				" IN  (SELECT subscriber_id FROM  account_database.subscriber WHERE full_name = '"+changedSubscriberName+"')"
+					"AND  month(transaction_date)=month(str_to_date('"+ResulMonthCombo_index_string+"','%m')) AND year(transaction_date)=year(str_to_date('"+ResulYearCombo+"','%Y'))";
 				    int row_number = 0;
 
 				    query_state=mysql_query(conn, mysql_Data_for_report.c_str());
 				    // set variables and form elements with data from mysql tables
 
+
+				    int NubrOffreetabs=122;//Value for blank space(to make both reports more semetric)
 				    if(query_state!=0)
 				    		{
 				    		std::cout<<mysql_error(conn)<<std::endl<<std::endl;
@@ -816,7 +911,7 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 				    //if more than 1
 					while((row=mysql_fetch_row(res))!=NULL)
 					{row_number++;
-
+					NubrOffreetabs-=34;//if we add service delete more blank space
 
 							     	std::string TempLength1=row[0];
 							     	std::string TempLength2=row[1];
@@ -830,45 +925,54 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 							     	ServiceTemp.replace(f,std::string("ServicePrice").length(), row[1]);
 
 					out3.insert(out3.find("<!--ServiceEnd-->")+std::string("<!--ServiceEnd-->").length()+numberforskip,ServiceTemp);
-					numberforskip+=220+TempLength1.length()+1;//220 is size of pure HTML wiout any text + text that we added to skip forvard
+					numberforskip+=256+TempLength1.length()+1;//220 is size of pure HTML wiout any text + text that we added to skip forvard
 							     				}
 
 							      mysql_free_result(res);
 								  mysql_close(conn);
 
+				out3+="<div style=\"height: " +std::to_string(NubrOffreetabs)+" px;\">&nbsp;</div>";//add blank space befor next report
+
+
+				//find formated text of report copy at the end it
  std::string Copytext = out3.substr(out3.find("<!--CopyStart-->")+std::string("<!--CopyStart-->").length(),out3.find("<!--CopyEnd-->")-(out3.find("<!--CopyStart-->")+std::string("<!--CopyStart-->").length()));
 
+		out3+=Copytext+"</div>";//close whole div
 
-
-		out3+=Copytext+"</div>";
-
+		//OUTput in file to test HTML
 		std::ofstream out2("output.txt");
 		out2 << out3;
 		out2.close();
 
 
-
-
-
-
+             //creat pdf with contructor
 			 Wt::WResource *pdf = new ReportResource(service_table_container,changedSubscriberName,out3);
-
-			  Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf",service_table_container);
+           //  Wt::WPushButton *button2 = new Wt::WPushButton("Create pdf",service_table_container);
 
 
 			  //link to rendered  file
-			 button2->setLink(pdf);
+		//	 button2->setLink(pdf);
+			 Wt::WApplication::redirect(pdf->url());//link to pdf to download
+
 
 				    }
 				    else {
-						messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Не выбран абонент"), Wt::Information, Wt::Yes | Wt::No);
+						messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Нет данных по этой дате"), Wt::Information, Wt::Yes | Wt::No);
 						messageBox->buttonClicked().connect(std::bind([=] () {
 						delete messageBox;
 						}));
 
 						messageBox->show();
 					}
+						}else
+						{
+							messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Не выбран абонент"), Wt::Information, Wt::Yes | Wt::No);
+							messageBox->buttonClicked().connect(std::bind([=] () {
+							delete messageBox;
+							}));
 
+							messageBox->show();
+						}
 
 
 }
@@ -878,7 +982,7 @@ extern void WtAccounts::p_account_operation_create_Report(std::string operation_
 extern void WtAccounts::p_account_operation_Report(std::string operation_name)
 {
 
-//NOT READY (func for another buttons)!!!!!
+
 // show dialog window where you manage reports (create)
 
 
@@ -903,13 +1007,61 @@ Wt::WPushButton *add2_service_button = new Wt::WPushButton(Wt::WString::fromUTF8
 
 
 	                    // Accept the dialog
-
+	                //    save_exit_button->setLink()
 	                    save_exit_button->clicked().connect(std::bind([=] () {
-	                    	WtAccounts::p_account_operation_create_Report("edit");  dor=1;dialog->accept();delete dialog;
+	                      WtAccounts::p_account_operation_create_Report("edit");
+
+	                       dor=1;dialog->accept();delete dialog;
 	                    }));
 
 	                    add_service_button->clicked().connect(std::bind([=] () {
-	                    	  WtAccounts::subscriber_show_operation_tab("view");    dor=2;dialog->accept();delete dialog;
+	                    	 // WtAccounts::subscriber_show_operation_tab("view");
+
+//herdre
+	                    	ui->create_user_tab_mi_report_edit->setHidden(false);
+	                    	ui->main_tabs->setCurrentIndex(3);
+
+	                		std::ifstream infile("cssQ.txt");
+	                		std::string out3="";
+	                		std::stringstream buffer;
+
+	                		if ( infile )
+	                		{
+	                			buffer << infile.rdbuf();
+	                			infile.close();
+	                			out3=buffer.str();
+	                			// operations on the buffer...
+	                		}
+	                		std::string temp_text_report_edit1="";
+	                		std::string temp_text_report_edit2="";
+	                	//	auto itr_text_search;
+	                		auto temp_lenth=std::string("<!--First_Text-->").length();
+
+
+	                			//std::ofstream out2("output.txt");
+
+
+
+	                		//find find place of first keyword->copy from it and sub  its lenth.
+	                		//second arument is how much to copy  -> ( we find second keyword and sub from it  iterator place of  first  keywod to get length just text between
+	temp_text_report_edit1 = out3.substr(out3.find("<!--First_Text-->")+std::string("<!--First_Text-->").length(),out3.find("<!--End_F_Text-->")-(out3.find("<!--First_Text-->")+std::string("<!--First_Text-->").length()));
+
+  //  out2<<temp_text_report_edit1;
+	ui->user_text_area_report_edit_1->setText(Wt::WString::fromUTF8(temp_text_report_edit1));
+
+	temp_text_report_edit2 = out3.substr(out3.find("<!--Second_text2-->")+std::string("<!--Second_text2-->").length(),out3.find("<!--End_S_Text2-->")-(out3.find("<!--Second_text2-->")+std::string("<!--Second_text2-->").length()));
+	//out2<<temp_text_report_edit2;
+
+	ui->user_text_area_report_edit_2->setText(Wt::WString::fromUTF8(temp_text_report_edit2));
+
+	// out2.close();
+
+
+
+
+
+
+	                    	  dor=2;dialog->accept();delete dialog;
                          }));
 
 	                    add2_service_button->clicked().connect(std::bind([=] () {
@@ -921,13 +1073,14 @@ Wt::WPushButton *add2_service_button = new Wt::WPushButton(Wt::WString::fromUTF8
 
 
 	                    // Process the dialog result.
+	                    /*
 	                    dialog->finished().connect(std::bind([=] () {
 	                	if (dor==1)      {}
 	                	else if (dor==2) {}
 	                	else if (dor==3) {}
 	                	else if (dor==0) {}
 	                	dor==0;
-	                    }));
+	                    }));*/
 
 }
 
@@ -936,30 +1089,31 @@ extern void WtAccounts::p_account_operation_CHECK(std::string operation_name)
 {
 	Wt::WMessageBox *messageBox;
 
-//get name of M that pressed
+//get name of Menu that pressed
 std::string ResultOfoperationmeny="";
 ResultOfoperationmeny=ui->p_account_operation_split_button_popup->result()->text().toUTF8();
 
 std::set<Wt::WTreeNode* > highlightedRows = ui->user_treeTable->tree()->selectedNodes();
-if (!highlightedRows.empty())
-				{
+//if (!highlightedRows.empty()){}
+
+//Trafic and net flow depend on user that selected t we check if any user selected first inside func
+
+
 
 if (Wt::WString::fromUTF8("Телефонный трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny) || Wt::WString::fromUTF8("Netflow трафик")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
 	p_account_operation_Data("Телефонный трафик");
 }
-if (Wt::WString::fromUTF8("Новый отчет")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
-	p_account_operation_Report("Новый отчет");
-}
-				}
-else
-				{
-					messageBox = new Wt::WMessageBox(Wt::WString::fromUTF8("Ошибка"), Wt::WString::fromUTF8("Не выбран абонент"), Wt::Information, Wt::Yes | Wt::No);
-					messageBox->buttonClicked().connect(std::bind([=] () {
-					delete messageBox;
-					}));
 
-					messageBox->show();
-				}}
+//Generate report ( check if user selected  inside func)
+if (Wt::WString::fromUTF8("Новый отчет")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+	WtAccounts::p_account_operation_create_Report("edit");}
+
+if (Wt::WString::fromUTF8("Создать отчет")==Wt::WString::fromUTF8(ResultOfoperationmeny)){
+				p_account_operation_Report("Новый отчет");}
+
+
+}
+
 
 
 ///
@@ -4297,7 +4451,7 @@ extern void WtAccounts::save_data_and_close_tab(std::string operation_name)
 
 		mysql_free_result(res);
 		mysql_close(conn);
-	} else // operation_name == "create" ############################################################################
+	} else // operation_name == "edit" ############################################################################
 	{
 		mysql_init(&mysql);
 		conn=mysql_real_connect(&mysql, server, user, password, database, 0, 0, 0);

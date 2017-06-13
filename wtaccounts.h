@@ -18,21 +18,6 @@
 
 
 
-	// height = HPDF_Page_GetHeight (page);
-	// width = HPDF_Page_GetWidth (page);
-
-	 /* Print the title of the page (with positioning center). */
-	//    def_font = HPDF_GetFont (pdf, "Helvetica", NULL);
-	  //  HPDF_Page_SetFontAndSize (page, def_font, 24);
-
-	   // tw = HPDF_Page_TextWidth (page, page_title);
-	   // HPDF_Page_BeginText (page);
-	//    HPDF_Page_TextOut (page, width , height - 50, page_title);
-	 //   HPDF_Page_EndText (page);
-
-
-
-
 
 class ReportResource2
 {	std::string gow="";
@@ -56,7 +41,6 @@ public:
 	void edit_subscriber_load_data();
 	// ***
 
-	void superrefresh();
 
     void p_account_operation_CHECK(std::string operation_name);
     //data
@@ -64,8 +48,10 @@ public:
     //report
     void p_account_operation_Report(std::string operation_name);
     void p_account_operation_create_Report(std::string operation_name);
+    void Configure_edited_report_data_Report(std::string operation_name);
     //Serarch
     void Search_tree_Names(std::string operation_name);
+
 
 	void subscriber_show_operation_tab(std::string operation_name);
 	void subscriber_name_dialog(std::string operation_name);

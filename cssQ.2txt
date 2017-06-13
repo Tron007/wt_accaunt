@@ -1,0 +1,127 @@
+<div style="width: 595px; height: 845px; display: block; margin: 0 0; margin-bottom: 0.5cm;">
+<!--CopyStart-->
+<div style="margin-left: 39%;">
+<table width="497" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="width: 137px;" valign="top">&nbsp;</td>
+<td style="width: 137px;" valign="top">&nbsp;</td>
+<td style="width: 137px;" valign="top">
+<p><strong><span style="font-size: 5pt;">&nbsp;счет-извещение</span></strong></p>
+</td>
+<td style="width: 169px;" valign="top">
+<p><span style="text-decoration: underline; font-size: 5pt;">№ year_month-req_code</span></p>
+</td>
+</tr>
+<tr>
+<td style="width: 99px;" valign="top">&nbsp;</td>
+<td style="width: 101px;" valign="top">&nbsp;</td>
+<td style="width: 137px;" valign="top">
+<p><span style="font-size: 5pt;">№ лицевого счета Абонента </span></p>
+<p><span style="font-size: 5pt;">номер телефона</span></p>
+</td>
+<td style="width: 169px;" valign="top"><span style="font-size: 6.5pt;">&nbsp;</span>
+<p><span style="font-size: 5pt;">req_code Name_w</span></p>
+<p><span style="font-size: 5pt;">P_number</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p style="text-align: center; margin: 0;"><span style="font-size: 7pt;"><br /><span style="font-size: 8pt;"><strong>ИИH personal_code ,</strong></span></span></p>
+<p style="text-align: center; margin: 0;"><span style="font-size: 7pt;"><strong>Adress_</strong></span></p>
+<p style="text-align: center; margin: 0;"><span style="font-size: 7pt;"><strong>отчетный период &nbsp; Report_time1</strong></span></p>
+<table style="width: 592px; margin-left: auto; margin-right: auto;" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="width: 92px; text-align: center;">
+<p><strong><span style="font-size: 5pt;">сальдо на начало периода</span></strong></p>
+</td>
+<td style="width: 92px; text-align: center;">
+<p><strong><span style="font-size: 5pt;">начислено за услуги связи за отчетный период</span></strong></p>
+</td>
+<td style="width: 118px; text-align: center;">
+<p><strong><span style="font-size: 5pt;">корректировки (за отчетный период)</span></strong></p>
+</td>
+<td style="width: 162px; text-align: center;">
+<p><strong><span style="font-size: 5pt;">оплата(оплаченные суммы в отчетном периоде)</span></strong></p>
+</td>
+<td style="width: 94px; text-align: center;">
+<p><strong><span style="font-size: 5pt;">Итого к оплате</span></strong></p>
+</td>
+</tr>
+<tr>
+<td style="width: 92px;">
+<p><span style="font-size: 5pt;">1</span></p>
+</td>
+<td style="width: 92px;">
+<p><span style="font-size: 5pt;">2</span></p>
+</td>
+<td style="width: 118px;">
+<p><span style="font-size: 5pt;">3</span></p>
+</td>
+<td style="width: 162px;">
+<p><span style="font-size: 5pt;">4</span></p>
+</td>
+<td style="width: 94px;">
+<p><span style="font-size: 5pt;">5</span></p>
+</td>
+</tr>
+<tr>
+<td style="width: 92px;">
+<p><span style="font-size: 5pt;">COL_1</span></p>
+</td>
+<td style="width: 92px;">
+<p><span style="font-size: 5pt;">COL_2</span></p>
+</td>
+<td style="width: 118px;">
+<p><span style="font-size: 5pt;">COL_3</span></p>
+</td>
+<td style="width: 162px;">
+<p><span style="font-size: 5pt;">COL_4</span></p>
+</td>
+<td style="width: 94px;">
+<p><span style="font-size: 5pt;">COL_5</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align: right; font-size: 6pt;"><br />&nbsp;За услуги связи month_w year_n г: &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 0,00</p>
+<table style="float: center; margin-left: 1320%;" border="1" width="383" cellspacing="0" cellpadding="0">
+<tbody><!--ServiceStart-->
+<tr>
+<td style="width: 179px;">
+<p style="text-align: right;"><span style="font-size: 5pt;">ServiceName</span></p>
+</td>
+<td style="width: 188px;">
+<p style="text-align: right;"><span style="font-size: 5pt;">ServicePrice</span></p>
+</td>
+</tr>
+<!--ServiceEnd-->
+<tr>
+<td style="width: 179px;">
+<p style="text-align: right;"><strong><span style="font-size: 5pt;">Итого к оплате</span></strong></p>
+</td>
+<td style="width: 188px;">
+<p style="text-align: right;"><span style="font-size: 5pt;">Total_TO_PAY</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div style="float: right;">&nbsp;</div>
+<p style="text-align: right; font-size: 6pt;">К оплате: &ensp;&ensp; &ensp;&ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 0,00</p>
+<table style="margin-left: auto; margin-right: auto;" width="593">
+<tbody>
+<tr>
+<td style="width: 287px; font-size: 5pt;">
+<p><!--First_Text-->В случае несвоевременной оплаты оператор связи Сит ап оставляет за собой право приостановить предоставление Услуг связи до полного погашения задолженности. При ухудшении качества предоставляемых Услуг сообщать Оператору по тел. 474747 По всем вопросам обращаться по телефону 474747 или по адресам: г. Астана, пр. Бауыржана Момышулы,17 г.Астана,Коргалжынское шоссе, 19 БЦ Коргалжын офис 100/2 г.Астана, Жилой массив Ильинка, ул.Исатай Батыра,28, офис 3<!--End_F_Text--></p>
+</td>
+<td style="width: 290px; font-size: 5pt;">
+<p><!--Second text-->Организация ТОО "51Р Те1есош" РНН 620300321195, БИН 090740015702 ПИК К2806010111000144007 в АО &laquo;Народный банк Казахстана&raquo;, г. Астана БИК: Н5ВКК2КХ (для оплаты в кассах АО "Народный банк Казахстана") ПИК К2719261501163176000 в АО "Казкоммерцбанк"
+БИК К2ЖОК2ЖХ (для оплаты в кассах АО"Казкоммерцбанк")<!--End_S_Text--></p>
+
+</td>
+</tr>
+</tbody>
+</table>
+<!--CopyEnd-->
