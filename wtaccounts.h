@@ -73,6 +73,8 @@ public:
 	void subscriber_contact_dialog(std::string operation_name);
 	void save_data_and_close_tab(std::string operation_name);
 
+	void manage_new_call_tariff_dialog();
+
 	// administrative functions
 	// *************************************************************************
 	void manage_services_dialog();
@@ -81,6 +83,7 @@ public:
 
 	void subscriber_fullName_changed();
 
+	void change_to_edit_new_call_tariff_dialog();
 
 private:
 	Ui_WtAccounts *ui;
